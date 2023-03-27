@@ -106,7 +106,7 @@ class ner():
                 continue
         
         count = count*10/(n)
-        return min(count, 10)
+        return count
     
     def ner_score(self):
         text1 = self.text1
@@ -114,6 +114,11 @@ class ner():
 
         modal_entity = self.spacy_name(text1)
         user_entity = self.spacy_name(text2)
+
+        modal_entity_set = set(modal_entity)
+        user_entity_set = set(user_entity)
+        modal_entity = list(modal_entity_set)
+        user_entity = list(user_entity_set)
 
         score = self.compute_score_spacy(modal_entity, user_entity)
 
