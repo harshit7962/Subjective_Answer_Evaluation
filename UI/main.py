@@ -26,7 +26,10 @@ class similarity():
         cos = np.dot(text1_emb, text2_emb)/(norm(text1_emb)*norm(text2_emb))
         return cos
     
-    def similarity_score(self, text1, text2):
+    def similarity_score(self):
+        text1 = self.text1
+        text2 = self.text2
+
         text2 += self.summarize(text2)
 
         mod_sent = sent_tokenize(text1)
@@ -74,7 +77,7 @@ t2 = "Data independence is the ability to modify the scheme without affecting th
 
 @app.route('/')
 def home():
-    return render_template('index.html', score=similarity(t1,t2).similarity_score(t1, t2))
+    return render_template('index.html', score=similarity(t1,t2).similarity_score())
 
 
 app.run(debug=True)
