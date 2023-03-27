@@ -10,6 +10,11 @@ from sentence_transformers import SentenceTransformer
 import torch
 from transformers import T5Tokenizer,T5ForConditionalGeneration
 
+# NER Module Imports
+import spacy
+import spacy_transformers
+import en_core_web_trf
+
 app = Flask(__name__)
 
 class similarity():
@@ -71,13 +76,62 @@ class similarity():
 
         return summary
 
+class ner():
+    def __init__(self, text1, text2):
+        self.text1 = text1
+        self.text2 = text2
+
+    def spacy_name(self, text):
+        nlp = en_core_web_trf.load()
+
+        doc = nlp(text)
+        named_entities = []
+
+        for entity in doc.ents:
+            named_entities.append((entity.text, entity.label_))
+        
+        return named_entities
+    
+    def compute_score_spacy(self, modal_entity, user_entity):
+        n = len(modal_entity)
+        m = len(user_entity)
+        count = 0
+
+        if(n == 0):
+            return 10
+        
+        for i in range(m):
+            if(user_entity[i] in modal_entity):
+                count += 1
+                continue
+        
+        count = count*10/(n)
+        return min(count, 10)
+    
+    def ner_score(self):
+        text1 = self.text1
+        text2 = self.text2
+
+        modal_entity = self.spacy_name(text1)
+        user_entity = self.spacy_name(text2)
+
+        score = self.compute_score_spacy(modal_entity, user_entity)
+
+        return score
+
+
+
+
+
 t1 = "Data independence is the ability of a system to make changes to its data storage structures without affecting the way users access or manage the data. This means that users can modify and update databases without having to rewrite code, which saves time and resources. Data independence also reduces the risk of errors due to incorrect coding, as well as ensuring that any changes made are consistent across all systems."
 
 t2 = "Data independence is the ability to modify the scheme without affecting the programs and the application to be rewritten. Data is separated from the programs, so that the changes made to the data will not affect the program execution and the application."
 
 @app.route('/')
 def home():
-    return render_template('index.html', score=similarity(t1,t2).similarity_score())
+    return render_template('index.html', 
+                           sim_score=similarity(t1,t2).similarity_score(),
+                           ner_score=ner(t1,t2).ner_score())
 
 
 app.run(debug=True)
