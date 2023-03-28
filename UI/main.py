@@ -17,6 +17,10 @@ import en_core_web_trf
 
 # Keyword Module Imports
 import yake
+import re
+from nltk.corpus import wordnet
+from nltk.tokenize import word_tokenize
+from nltk.tag import pos_tag
 
 app = Flask(__name__)
 
@@ -72,7 +76,7 @@ class similarity():
         preprocessed_text = text.strip().replace('\n', '')
         t5_input_text = 'summarize: ' + preprocessed_text
 
-        tokenized_text = self.tokenizer.encode(t5_input_text, return_tensors='pt', max_length=512).to(self.device)
+        tokenized_text = self.tokenizer.encode(t5_input_text, return_tensors='pt', max_length=512, truncation=True).to(self.device)
 
         summary_ids = self.model_summary.generate(tokenized_text, min_length=30, max_length=120)
         summary = self.tokenizer.decode(summary_ids[0], skip_special_tokens=True)
@@ -96,6 +100,20 @@ class ner():
         return named_entities
     
     def compute_score_spacy(self, modal_entity, user_entity):
+        user_arr = []
+        modal_arr = []
+
+        for i in range(0, len(user_entity)):
+            if(user_entity[i][1]!='CARDINAL'):
+                user_arr.append(user_entity[i][0].lower())
+
+        for i in range(0, len(modal_entity)):
+            if(modal_entity[i][1]!='CARDINAL'):
+                modal_arr.append(modal_entity[i][0].lower())
+
+        user_entity = list(set(user_arr))
+        modal_entity = list(set(modal_arr))
+
         n = len(modal_entity)
         m = len(user_entity)
         count = 0
@@ -103,10 +121,9 @@ class ner():
         if(n == 0):
             return 10
         
-        for i in range(m):
-            if(user_entity[i] in modal_entity):
+        for i in range(n):
+            if(modal_entity[i] in user_entity):
                 count += 1
-                continue
         
         count = count*10/(n)
         return count
@@ -118,19 +135,104 @@ class ner():
         modal_entity = self.spacy_name(text1)
         user_entity = self.spacy_name(text2)
 
-        modal_entity_set = set(modal_entity)
-        user_entity_set = set(user_entity)
-        modal_entity = list(modal_entity_set)
-        user_entity = list(user_entity_set)
-
         score = self.compute_score_spacy(modal_entity, user_entity)
 
         return score
 
 class keyword():
+    R_patterns = [
+        (r'won\'t', 'will not'),
+        (r'can\'t', 'can not'),
+        (r'(\w+)\'m', '\g<1> am'),
+        (r'(\w+)\'ll', '\g<1> will'),
+        (r'(\w+)\'d like to', '\g<1> would like to'),
+    ]
+
     def __init__(self, text1, text2):
         self.text1 = text1
         self.text2 = text2
+        self.patterns = [(re.compile(regex), repl) for (regex, repl) in self.R_patterns]
+
+    def replace(self, text):
+        s = text
+        for (pattern, repl) in self.patterns:
+            s = re.sub(pattern, repl, s)
+        
+        return s
+    
+    def text_lower(self, x):
+        return x.lower()
+    
+    def corrector(self, x):
+        return x.replace('. ', '.')
+    
+    def replace_punct(self, x):
+        pattern = "[^\w\d\+\*\-\\\=\s]"
+        repl = " "
+
+        return re.sub(pattern, repl, x)
+    
+    def remove_extra(self, text):
+        return " ".join(text.strip().split())
+    
+    def keywordExtractor(self, text):
+        custom_kw_extractor = yake.KeywordExtractor(
+            lan = "en",
+            n = 1,
+            deduplim = 0.9,
+            dedupFunc= 'seqm',
+            windowsSize= 2,
+            top = 101,
+            features = None
+            )
+        
+        return custom_kw_extractor.extract_keywords(text)
+    
+    def scoring_unit(self, keywords_text1, keywords_text2):
+        match = 0
+        total = 0
+        synonym_dict = []
+
+        for token in keywords_text1:
+            total += token[1]
+        
+        if(total == 0):
+            return 10
+        
+        for var in keywords_text2:
+            syn = wordnet.sysnets(var[0])
+            syn_words = [x.lemma_names() for x in syn]
+            syn_words = [x for elem in syn_words for x in elem]
+            syn_words.append(var[0])
+            syn_words = list(set(syn_words))
+
+            temp = []
+
+            wt = word_tokenize(var[0])
+            pos = pos_tag(wt)[0][1]
+
+            for i in range(0, len(syn_words)):
+                checker_wt = word_tokenize(syn_words[i])
+                checker_pos = pos_tag(wt)[0][1]
+                if(pos == checker_pos):
+                    temp.append(syn_words[i])
+            
+            synonym_dict = synonym_dict + temp
+
+        for token in keywords_text1:
+            syn = wordnet.sysnets(token[0])
+            syn_words = [x.lemma_names() for x in syn]
+            syn_words = [x for elem in syn_words for x in elem]
+            syn_words.append(token[0])
+            syn_words = list(set(syn_words))
+
+            if len(set(syn_words).intersection(set(synonym_dict)))!=0:
+                match += token[1]
+    
+        return match*10/total
+
+        
+
 
     
     
