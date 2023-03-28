@@ -15,6 +15,9 @@ import spacy
 import spacy_transformers
 import en_core_web_trf
 
+# Keyword Module Imports
+import yake
+
 app = Flask(__name__)
 
 class similarity():
@@ -123,6 +126,13 @@ class ner():
         score = self.compute_score_spacy(modal_entity, user_entity)
 
         return score
+
+class keyword():
+    def __init__(self, text1, text2):
+        self.text1 = text1
+        self.text2 = text2
+
+    
     
 t1 = "Data independence is the ability of a system to make changes to its data storage structures without affecting the way users access or manage the data. This means that users can modify and update databases without having to rewrite code, which saves time and resources. Data independence also reduces the risk of errors due to incorrect coding, as well as ensuring that any changes made are consistent across all systems."
 
