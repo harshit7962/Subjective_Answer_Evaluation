@@ -230,6 +230,13 @@ class keyword():
                 match += token[1]
     
         return match*10/total
+    
+    def keyword_scoring(self):
+        text1 = self.text1
+        text2 = self.text2
+
+        # Todo: yaha se code add karna Raghav
+        # text1 will be modal input and text2 will be user input
 
         
 
