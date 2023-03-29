@@ -18,9 +18,14 @@ import en_core_web_trf
 # Keyword Module Imports
 import yake
 import re
+import nltk
+nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('maxent_ne_chunker')
 from nltk.corpus import wordnet
 from nltk.tokenize import word_tokenize
 from nltk.tag import pos_tag
+
 
 app = Flask(__name__)
 
@@ -179,7 +184,7 @@ class keyword():
         custom_kw_extractor = yake.KeywordExtractor(
             lan = "en",
             n = 1,
-            deduplim = 0.9,
+            dedupLim = 0.9,
             dedupFunc= 'seqm',
             windowsSize= 2,
             top = 101,
@@ -200,7 +205,7 @@ class keyword():
             return 10
         
         for var in keywords_text2:
-            syn = wordnet.sysnets(var[0])
+            syn = wordnet.synsets(var[0])
             syn_words = [x.lemma_names() for x in syn]
             syn_words = [x for elem in syn_words for x in elem]
             syn_words.append(var[0])
@@ -220,7 +225,7 @@ class keyword():
             synonym_dict = synonym_dict + temp
 
         for token in keywords_text1:
-            syn = wordnet.sysnets(token[0])
+            syn = wordnet.synsets(token[0])
             syn_words = [x.lemma_names() for x in syn]
             syn_words = [x for elem in syn_words for x in elem]
             syn_words.append(token[0])
@@ -231,27 +236,46 @@ class keyword():
     
         return match*10/total
     
-    def keyword_scoring(self):
+    def keyword_score(self):
         text1 = self.text1
         text2 = self.text2
 
         # Todo: yaha se code add karna Raghav
         # text1 will be modal input and text2 will be user input
 
-        
+        text1 = self.replace(text1)
+        text2 = self.replace(text2)
+        text1 = self.text_lower(text1)
+        text2 = self.text_lower(text2)
+        text1 = self.corrector(text1)
+        text2 = self.corrector(text2)
+        text1 = self.replace_punct(text1)
+        text2 = self.replace_punct(text2)
+        text1 = self.remove_extra(text1)
+        text2 = self.remove_extra(text2)
 
+        yake_keyword_model = self.keywordExtractor(text1)
+        yake_keyword_user = self.keywordExtractor(text2)
+
+        return self.scoring_unit(yake_keyword_model, yake_keyword_user)
 
     
-    
-t1 = "Data independence is the ability of a system to make changes to its data storage structures without affecting the way users access or manage the data. This means that users can modify and update databases without having to rewrite code, which saves time and resources. Data independence also reduces the risk of errors due to incorrect coding, as well as ensuring that any changes made are consistent across all systems."
+t1 = '''
+BCNF stands for Boyce-Codd Normal Form, which is a normal form used in database normalization. BCNF is based on the concept of functional dependencies between attributes in a relation.A relation is said to be in BCNF if and only if every determinant (i.e., every candidate key) of the relation is a superkey of the relation. In simpler terms, a relation is in BCNF if every non-trivial functional dependency in the relation has a determinant that is a candidate key. The process of decomposing a relation into smaller, normalized relations is called normalization. Normalization is important for database design because it helps to eliminate redundancy, minimize data inconsistencies, and ensure data integrity. However, it is important to note that normalization is not always the best solution, and it may not always be possible to achieve BCNF.
+'''
 
-t2 = "Data independence is the ability to modify the scheme without affecting the programs and the application to be rewritten. Data is separated from the programs, so that the changes made to the data will not affect the program execution and the application."
+t2 = '''
+Boyce–Codd Normal Form (BCNF) is based on functional dependencies that take into account all candidate keys in a relation; however, BCNF also has additional constraints compared with the general definition of 3NF. A relation is in BCNF if, X is superkey for every functional dependency (FD) X?Y in given relation. In other words, A relation is in BCNF, if and only if, every determinant is a Form (BCNF) candidate key.
+'''
 
 @app.route('/')
 def home():
-    return render_template('index.html', 
+    return render_template('index.html',
+                           model = t1,
+                           user = t2, 
                            sim_score=similarity(t1,t2).similarity_score(),
-                           ner_score=ner(t1,t2).ner_score())
+                           ner_score=ner(t1,t2).ner_score(),
+                           key_score=keyword(t1,t2).keyword_score())
 
 
 app.run(debug=True)
