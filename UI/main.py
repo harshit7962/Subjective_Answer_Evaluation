@@ -1,5 +1,6 @@
 # Flask Imports
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+import pymongo
 
 # Similarity Module Imports
 import pandas as pd
@@ -29,6 +30,17 @@ from nltk.tag import pos_tag
 
 app = Flask(__name__)
 
+# MongoDB Database Connection
+client = pymongo.MongoClient("mongodb+srv://root:root@cluster1.kdihmbe.mongodb.net/?retryWrites=true&w=majority")
+db = client["data_db"]
+
+# MongoDB Collection Names
+student_details = db["student_details"]
+teacher_details = db["teacher_details"]
+test_details = db["test_details"]
+questionnaire_details = db["questionnaire_details"]
+
+# Similarity Module
 class similarity():
     model_sbert = SentenceTransformer('stsb-mpnet-base-v2')
     model_summary = T5ForConditionalGeneration.from_pretrained('t5-small')
@@ -88,6 +100,7 @@ class similarity():
 
         return summary
 
+# NER Module
 class ner():
     def __init__(self, text1, text2):
         self.text1 = text1
@@ -144,6 +157,7 @@ class ner():
 
         return score
 
+# Keyword Module
 class keyword():
     R_patterns = [
         (r'won\'t', 'will not'),
@@ -240,9 +254,6 @@ class keyword():
         text1 = self.text1
         text2 = self.text2
 
-        # Todo: yaha se code add karna Raghav
-        # text1 will be modal input and text2 will be user input
-
         text1 = self.replace(text1)
         text2 = self.replace(text2)
         text1 = self.text_lower(text1)
@@ -268,14 +279,19 @@ t2 = '''
 Boyce–Codd Normal Form (BCNF) is based on functional dependencies that take into account all candidate keys in a relation; however, BCNF also has additional constraints compared with the general definition of 3NF. A relation is in BCNF if, X is superkey for every functional dependency (FD) X?Y in given relation. In other words, A relation is in BCNF, if and only if, every determinant is a Form (BCNF) candidate key.
 '''
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def home():
-    return render_template('index.html',
-                           model = t1,
-                           user = t2, 
-                           sim_score=similarity(t1,t2).similarity_score(),
-                           ner_score=ner(t1,t2).ner_score(),
-                           key_score=keyword(t1,t2).keyword_score())
+    if request.method == "POST":
+        name = request.form.get('name')
+        email = request.form.get('email')
+        phone = request.form.get('phone')
+        student_id = request.form.get('student_id')
+        
+        print(name, email, phone, student_id)
+
+        student_details.insert_one({"name": name, "email": email, "phone": phone, "student_id": student_id})
+    
+    return render_template("test_db.html")
 
 
 app.run(debug=True)
