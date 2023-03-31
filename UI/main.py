@@ -1,6 +1,7 @@
 # Flask Imports
 from flask import Flask, render_template, request
 import pymongo
+import json
 
 # Similarity Module Imports
 import pandas as pd
@@ -27,11 +28,13 @@ from nltk.corpus import wordnet
 from nltk.tokenize import word_tokenize
 from nltk.tag import pos_tag
 
+with open("config.json", "r") as f:
+    params = json.load(f)["params"]
 
 app = Flask(__name__)
 
 # MongoDB Database Connection
-client = pymongo.MongoClient("mongodb+srv://root:root@cluster1.kdihmbe.mongodb.net/?retryWrites=true&w=majority")
+client = pymongo.MongoClient("mongodb+srv://" + params["db_id"] +":" + params["db_pssd"] + "@cluster0.rq92bhz.mongodb.net/?retryWrites=true&w=majority")
 db = client["data_db"]
 
 # MongoDB Collection Names
