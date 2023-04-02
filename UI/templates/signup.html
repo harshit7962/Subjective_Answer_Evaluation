@@ -41,15 +41,13 @@
 						
                         <div class="login-form-content">
                             
-                                {% with messages = get_flashed_messages() %}
-                                {% if messages %}
+                                {% if message %}
                                     <div class="notification is-danger">
-                                      <h3 style = "color:white;font-family:verdana;">{{ messages[0] }}.</h3>  
+                                      <h3 style = "color:white;font-family:verdana;">{{ message }}.</h3>  
                                     </div>
                                 {% endif %}
-                                {% endwith %}
                             
-                            <form action="/register" class="signin-form" method="post">
+                            <form action="/signup" class="signin-form" method="post">
 								<div class="one-frm">
 
 									<label>Full Name</label>
@@ -60,8 +58,8 @@
 									<input type="email" name="email"  placeholder="Eg. xyz@gmail.com" required>
 								</div>
                                 <div class="one-frm">
-									<label>Student Id</label>
-									<input type="text" name="id"  placeholder="Eg. 17BCE0001" required>
+									<label>University / College / School</label>
+									<input type="text" name="college"  placeholder="Eg. VIT, Vellore" required>
 								</div>
                                 <div class="one-frm">
 									<label>Password</label>

@@ -1,5 +1,5 @@
 # Flask Imports
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, flash
 import pymongo
 import json
 import os
@@ -310,69 +310,84 @@ Need to implement contact.ejs and link to database
 def contact():
     return render_template('contact.ejs')
 
+@app.after_request
+def after_request(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return response
+
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
-    if "id" in session:
-        return redirect(url_for("loggedin"))
-    
+    if "email" in session:
+        session.pop("email", None)
+
+    message = ""   
     if request.method == 'POST':
         name = request.form.get('name')
         email = request.form.get('email')
-        id = request.form.get('id')
+        college = request.form.get('college')
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
 
         # Data Verification
-        if db.student_details.find_one({"student_id": id}):
+        if db.student_details.find_one({"email": email}):
             message="User is already registered"
-            return render_template("signup.html", message=message)
-        if password != confirm_password:
+
+        elif password != confirm_password:
             message = "Passwords do not match"
-            return render_template("signup.html", message=message)
+            print(message)
+
+        else:
+            # Generating Encrypted Password along with Creation Time
+            password = bcrypt.generate_password_hash(password).decode('utf-8')
+            created = datetime.now()
         
-        # Generating Encrypted Password along with Creation Time
-        password = bcrypt.generate_password_hash(password).decode('utf-8')
-        created = datetime.now()
-        
-        # Inserting the record to database
-        try:
-            db.student_details.insert_one({"student_id": id, "name": name, "email": email, "password": password, "created": created})
-            message = "User Registered Successfully"
-            return redirect(url_for("login"))
-        
-        except Exception as ex:
-            message = f"{ex}"
-            return render_template("signup.html", message=message)
-        
-    return render_template("signup.html", message="")
+            # Inserting the record to database
+            try:
+                db.student_details.insert_one({"name": name, "email": email, "college":college, "password": password, "created": created})
+                message = "User Registered Successfully"
+                return redirect(url_for("login"))
+
+            except Exception as ex:
+                message = f"{ex}"
+
+    return render_template("signup.html", message=message)
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    '''
-    Check if this feature is needed,
-    This essentailly doesn't let a user login in case they already have,
-    and their session is active
-    '''
-    if "id" in session:
-        return redirect(url_for("loggedin"))
-    
+    message = None
+    if "email" in session:
+        session.pop("email", None)
+
     if request.method == "POST":
-        id = request.form.get("id")
+        email = request.form.get("email")
         password = request.form.get("password")
 
-        user = db.student_details.find_one({"student_id": id})
+        user = db.student_details.find_one({"email": email})
 
         if user:
             if bcrypt.check_password_hash(user["password"], password):
-                session["id"] = id
+                session["email"] = email
                 return redirect(url_for("logged_in"))
             else:
                 message = "Incorrect Password"
-                return render_template("signin.html", message=message)
+                
         else:
             message = "User not found"
-            return render_template("signin.html", message=message)
+            
+    return render_template("signin.html", message=message)
+
+@app.route('/logged_in')
+def logged_in():
+    if "email" in session:
+        user = db.student_details.find_one({"email": session["email"]})
+        return render_template("test_loggedin.html", name = user["name"])
+    return render_template("signin.html", message="You are not Logged In")
+
+@app.route('/logout')
+def logout():
+    if "email" in session:
+        session.pop("email", None)
     
-    return render_template("signin.html", message="")
+    return redirect(url_for("index"))
 
 app.run(debug=True)
