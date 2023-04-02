@@ -1,7 +1,10 @@
 # Flask Imports
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect, url_for
 import pymongo
 import json
+import os
+from flask_bcrypt import Bcrypt
+from datetime import datetime
 
 # Similarity Module Imports
 import pandas as pd
@@ -32,6 +35,12 @@ with open("config.json", "r") as f:
     params = json.load(f)["params"]
 
 app = Flask(__name__)
+
+# Session Secret Key
+app.secret_key = os.urandom(24)
+
+# Encryption Initialization
+bcrypt = Bcrypt(app)
 
 # MongoDB Database Connection
 client = pymongo.MongoClient("mongodb+srv://" + params["db_id"] +":" + params["db_pssd"] + "@cluster0.rq92bhz.mongodb.net/?retryWrites=true&w=majority")
@@ -282,19 +291,88 @@ t2 = '''
 Boyce–Codd Normal Form (BCNF) is based on functional dependencies that take into account all candidate keys in a relation; however, BCNF also has additional constraints compared with the general definition of 3NF. A relation is in BCNF if, X is superkey for every functional dependency (FD) X?Y in given relation. In other words, A relation is in BCNF, if and only if, every determinant is a Form (BCNF) candidate key.
 '''
 
-@app.route('/', methods=['GET', 'POST'])
-def home():
-    if request.method == "POST":
+@app.route('/')
+def index():
+    return render_template('index.ejs')
+
+@app.route('/learn')
+def learn():
+    return render_template('learn.ejs')
+
+@app.route('/team')
+def team():
+    return render_template('team.ejs')
+
+'''
+Need to implement contact.ejs and link to database
+'''
+@app.route('/contact')
+def contact():
+    return render_template('contact.ejs')
+
+@app.route('/signup', methods=['POST', 'GET'])
+def signup():
+    if "id" in session:
+        return redirect(url_for("loggedin"))
+    
+    if request.method == 'POST':
         name = request.form.get('name')
         email = request.form.get('email')
-        phone = request.form.get('phone')
-        student_id = request.form.get('student_id')
+        id = request.form.get('id')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+
+        # Data Verification
+        if db.student_details.find_one({"student_id": id}):
+            message="User is already registered"
+            return render_template("signup.html", message=message)
+        if password != confirm_password:
+            message = "Passwords do not match"
+            return render_template("signup.html", message=message)
         
-        print(name, email, phone, student_id)
+        # Generating Encrypted Password along with Creation Time
+        password = bcrypt.generate_password_hash(password).decode('utf-8')
+        created = datetime.now()
+        
+        # Inserting the record to database
+        try:
+            db.student_details.insert_one({"student_id": id, "name": name, "email": email, "password": password, "created": created})
+            message = "User Registered Successfully"
+            return redirect(url_for("login"))
+        
+        except Exception as ex:
+            message = f"{ex}"
+            return render_template("signup.html", message=message)
+        
+    return render_template("signup.html", message="")
 
-        student_details.insert_one({"name": name, "email": email, "phone": phone, "student_id": student_id})
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    '''
+    Check if this feature is needed,
+    This essentailly doesn't let a user login in case they already have,
+    and their session is active
+    '''
+    if "id" in session:
+        return redirect(url_for("loggedin"))
     
-    return render_template("test_db.html")
+    if request.method == "POST":
+        id = request.form.get("id")
+        password = request.form.get("password")
 
+        user = db.student_details.find_one({"student_id": id})
+
+        if user:
+            if bcrypt.check_password_hash(user["password"], password):
+                session["id"] = id
+                return redirect(url_for("logged_in"))
+            else:
+                message = "Incorrect Password"
+                return render_template("signin.html", message=message)
+        else:
+            message = "User not found"
+            return render_template("signin.html", message=message)
+    
+    return render_template("signin.html", message="")
 
 app.run(debug=True)
