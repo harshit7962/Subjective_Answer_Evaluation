@@ -2,4 +2,5 @@ Models/individual_scores.csv
 UI/app.py
 UI/*/test_*
 UI/config.json
+ExamApplication/*
 ExamApplication/
