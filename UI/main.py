@@ -383,7 +383,13 @@ def login():
 def logged_in():
     if "email" in session:
         user = db.student_details.find_one({"email": session["email"]})
-        return render_template("test_loggedin.html", name = user["name"])
+
+        tests = db.test_details.find()
+
+        '''
+        TODO: replace the test_home.html with student home page containing all the tests available
+        '''
+        return render_template("test_home.html", name = user["name"], tests = tests)
     return render_template("signin.html", message="You are not Logged In")
 
 @app.route('/logout')
@@ -392,5 +398,26 @@ def logout():
         session.pop("email", None)
     
     return redirect(url_for("index"))
+
+@app.route("/test/<string:test_slug>", methods = ["GET"])
+def test_route(test_slug):
+    '''
+    TODO: replace the test_slug, with _id of each test, this can be done with the help of test_home.html currently
+    '''
+    if "email" in session:
+        test_number = db.test_details.find_one({"test_slug": test_slug})["test_number"]
+
+        questionnaire = db.questionnaire_details.find({"test_number": test_number})
+
+        '''
+        TODO: replace the test_showquestion.html with a new logic here
+        we need to implement a logic such that each question is displayed individually
+
+        The idea is to keep a counter, which will contain the current question number
+        now if user presses prev button on the home page, then we pass the request through this route and decrease the counter
+        if the user preseses next btn, then we pass the request through this route and increase the counter
+        '''
+        return render_template("test_showquestion.html", questions = questionnaire)
+    return render_template("signin.html", message="You are not Logged In")
 
 app.run(debug=True)
