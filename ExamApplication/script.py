@@ -56,7 +56,11 @@ def register():
     if request.method == 'POST':
         result = request.form
         result = dict(result)
-        mycol = mydb["student"]
+        print(result)
+        if(result["Author"] == 'Student'):
+            mycol = mydb["student"]
+        else:
+            mycol = mydb["faculty"]
         try:
             check = mycol.find({"Email": result['Email']})
             if(len(list(check)) >= 1):
@@ -71,7 +75,7 @@ def register():
                     print(result)
 
                     #this is bad practice since the data is not being checked before insert
-                    res = mydb["student"].insert_one(result) 
+                    res = mycol.insert_one(result) 
                     if res.acknowledged:
                         status = "successful"
                         message = "User Created Successfully"
