@@ -14,7 +14,6 @@ from nltk.tokenize import sent_tokenize
 from sentence_transformers import SentenceTransformer
 import torch
 from transformers import T5Tokenizer,T5ForConditionalGeneration
-
 # NER Module Imports
 import spacy
 import spacy_transformers
@@ -31,8 +30,10 @@ from nltk.corpus import wordnet
 from nltk.tokenize import word_tokenize
 from nltk.tag import pos_tag
 
+"""
 with open("config.json", "r") as f:
     params = json.load(f)["params"]
+"""
 
 app = Flask(__name__)
 
@@ -43,12 +44,12 @@ app.secret_key = os.urandom(24)
 bcrypt = Bcrypt(app)
 
 # MongoDB Database Connection
-client = pymongo.MongoClient("mongodb+srv://" + params["db_id"] +":" + params["db_pssd"] + "@cluster0.rq92bhz.mongodb.net/?retryWrites=true&w=majority")
+client = pymongo.MongoClient("mongodb+srv://amndb:F9fFT4fMiVwE8tre@cluster0.rq92bhz.mongodb.net/?retryWrites=true&w=majority")
 db = client["data_db"]
 
 # MongoDB Collection Names
 student_details = db["student_details"]
-teacher_details = db["teacher_details"]
+faculty_details = db["faculty_details"]
 test_details = db["test_details"]
 questionnaire_details = db["questionnaire_details"]
 
@@ -327,9 +328,10 @@ def signup():
         college = request.form.get('college')
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
+        author = request.form.get('author')
 
         # Data Verification
-        if db.student_details.find_one({"email": email}):
+        if(db.student_details.find_one({"email": email}) or db.faculty_details.find_one({"email": email})):
             message="User is already registered"
 
         elif password != confirm_password:
@@ -343,13 +345,16 @@ def signup():
         
             # Inserting the record to database
             try:
-                db.student_details.insert_one({"name": name, "email": email, "college":college, "password": password, "created": created})
+                if(author=='Student'):
+                    db.student_details.insert_one({"name": name, "email": email, "college":college, "password": password, "author": author, "created": created})
+                else:
+                    db.faculty_details.insert_one({"name": name, "email": email, "college":college, "password": password, "author": author, "created": created})
                 message = "User Registered Successfully"
                 return redirect(url_for("login"))
 
             except Exception as ex:
                 message = f"{ex}"
-
+    flash(message)
     return render_template("signup.ejs", message=message)
 
 @app.route('/login', methods=['POST', 'GET'])

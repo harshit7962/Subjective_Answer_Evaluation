@@ -33,7 +33,7 @@
                     <!-- if logo is image enable this  --> 
                         <a class="brand-logo" href="/">
                             <!--img src="image-path" alt="Your logo" title="Your logo" style="height:35px;" /-->
-                            <h1><a class="brand-logo" id="org" href="signup">Student Sign Up</a></h1>
+                            <h1 id="org">Student Sign Up</h1>
                         </a> 
                 </div>
                 <div class="workinghny-block-grid">
@@ -43,7 +43,7 @@
                             <span class="checkmark"></span>
                             <p class="remember"><strong>Signup as a Teacher/Faculty ?</strong></p>
                         </label>
-                        <img src="{{url_for('static', filename='image/2.png')}}" class="img-responsive" alt="img" />
+                        <img src="static/image/2.png" id="rightpick" class="img-responsive" alt="img" />
                     </div>
                     <div class="form-right-inf">
 						
@@ -79,7 +79,7 @@
 								</div>
                                 <div class="one-frm">
 									<label>Authorization</label>
-									<input type="text" id="auth" name="Author" value="Student" required readonly="readonly">
+									<input type="text" id="auth" name="author" value="Student" required readonly="readonly">
 								</div>
                                 <button class="btn btn-style mt-3">Sign Up </button>
                                 <p class="already">Have an account? <a href="/login">Sign In</a></p>
@@ -105,13 +105,13 @@
         function check() {
             var k = document.getElementById("selcus");
             if (k.checked) {
-                $("#rightpick").attr("src", "static/Blogger Hub/image/teacher.png");
+                $("#rightpick").attr("src", "static/image/teacher.png");
                 document.getElementById('org').innerHTML = 'Faculty Sign Up';
                 $("#auth").attr("value", "Faculty");
             }
             else {
                 document.getElementById('org').innerHTML = 'Student Sign Up';
-                $("#rightpick").attr("src", "static/Blogger Hub/image/2.png");
+                $("#rightpick").attr("src", "static/image/2.png");
                 $("#auth").attr("value", "Student");
             }
         }

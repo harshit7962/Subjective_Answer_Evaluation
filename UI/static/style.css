@@ -2,7 +2,7 @@
 Author: W3layouts
 Author URL: http://w3layouts.com
  */
-html {
+ html {
     scroll-behavior: smooth;
 }
 
@@ -179,7 +179,6 @@ button:hover {
 }
 
 .w3l-workinghny-form .align-end {
-    align-self: flex-end;
     padding: 2em;
 }
 
