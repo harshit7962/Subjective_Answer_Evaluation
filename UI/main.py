@@ -350,7 +350,7 @@ def signup():
             except Exception as ex:
                 message = f"{ex}"
 
-    return render_template("signup.html", message=message)
+    return render_template("signup.ejs", message=message)
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():

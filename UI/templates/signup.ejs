@@ -8,12 +8,15 @@
 	<meta charset="UTF-8" />
     <!-- Favicons -->
     <link href="{{url_for('static', filename='assets/img/favicon1.png')}}" rel="icon">
-	<!-- //Meta tag Keywords -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- //Meta tag Keywords -->
 	<link href="//fonts.googleapis.com/css2?family=Karla:wght@400;700&display=swap" rel="stylesheet">
 	<!--/Style-CSS -->
 	<link rel="stylesheet" href="{{url_for('static', filename='style.css')}}" type="text/css" media="all" />
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.css'>
- 
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 	<!--//Style-CSS -->
 </head>
 
@@ -30,11 +33,16 @@
                     <!-- if logo is image enable this  --> 
                         <a class="brand-logo" href="/">
                             <!--img src="image-path" alt="Your logo" title="Your logo" style="height:35px;" /-->
-                            <h1><a class="brand-logo" href="signup">Sign Up</a></h1>
+                            <h1><a class="brand-logo" id="org" href="signup">Student Sign Up</a></h1>
                         </a> 
                 </div>
                 <div class="workinghny-block-grid">
                     <div class="workinghny-left-img align-end">
+                        <label class="check-remaind" for="selcus">
+                            <input type="checkbox" id="selcus" onclick="check()">
+                            <span class="checkmark"></span>
+                            <p class="remember"><strong>Signup as a Teacher/Faculty ?</strong></p>
+                        </label>
                         <img src="{{url_for('static', filename='image/2.png')}}" class="img-responsive" alt="img" />
                     </div>
                     <div class="form-right-inf">
@@ -69,6 +77,10 @@
 									<label>Confirm Password</label>
 									<input type="password" name="confirm_password"  placeholder="" required>
 								</div>
+                                <div class="one-frm">
+									<label>Authorization</label>
+									<input type="text" id="auth" name="Author" value="Student" required readonly="readonly">
+								</div>
                                 <button class="btn btn-style mt-3">Sign Up </button>
                                 <p class="already">Have an account? <a href="/login">Sign In</a></p>
                             </form>
@@ -88,6 +100,22 @@
         <!-- //copyright-->
     </section>
     <!-- //form section start -->
+
+    <script>
+        function check() {
+            var k = document.getElementById("selcus");
+            if (k.checked) {
+                $("#rightpick").attr("src", "static/Blogger Hub/image/teacher.png");
+                document.getElementById('org').innerHTML = 'Faculty Sign Up';
+                $("#auth").attr("value", "Faculty");
+            }
+            else {
+                document.getElementById('org').innerHTML = 'Student Sign Up';
+                $("#rightpick").attr("src", "static/Blogger Hub/image/2.png");
+                $("#auth").attr("value", "Student");
+            }
+        }
+    </script>
 
 </body>
 

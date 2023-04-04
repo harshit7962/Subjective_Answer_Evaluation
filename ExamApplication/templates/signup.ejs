@@ -45,18 +45,15 @@
                         </label>
                         <img src="static/Blogger Hub/image/2.png" id="rightpick" class="img-responsive" alt="img" />
                     </div>
-
                     <div class="form-right-inf">
 						
                         <div class="login-form-content">
                             
-                                {% with messages = get_flashed_messages() %}
                                 {% if messages %}
                                     <div class="notification is-danger">
                                       <h3 style = "color:white;font-family:verdana;">{{ messages[0] }}.</h3>  
                                     </div>
                                 {% endif %}
-                                {% endwith %}
                             
                             <form action="/register" class="signin-form" method="post">
 								<div class="one-frm">
