@@ -30,10 +30,8 @@ from nltk.corpus import wordnet
 from nltk.tokenize import word_tokenize
 from nltk.tag import pos_tag
 
-"""
 with open("config.json", "r") as f:
     params = json.load(f)["params"]
-"""
 
 app = Flask(__name__)
 
@@ -44,7 +42,7 @@ app.secret_key = os.urandom(24)
 bcrypt = Bcrypt(app)
 
 # MongoDB Database Connection
-client = pymongo.MongoClient("mongodb+srv://amndb:F9fFT4fMiVwE8tre@cluster0.rq92bhz.mongodb.net/?retryWrites=true&w=majority")
+client = pymongo.MongoClient("mongodb+srv://" + params["db_id"] +":" + params["db_pssd"] + "@cluster0.rq92bhz.mongodb.net/?retryWrites=true&w=majority")
 db = client["data_db"]
 
 # MongoDB Collection Names
