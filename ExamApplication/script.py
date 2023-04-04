@@ -62,8 +62,9 @@ def register():
         else:
             mycol = mydb["faculty"]
         try:
-            check = mycol.find({"Email": result['Email']})
-            if(len(list(check)) >= 1):
+            check = mydb["student"].find({"Email": result['Email']})
+            check1 = mydb["faculty"].find({"Email": result['Email']})
+            if((len(list(check))+len(list(check1))) >= 1):
                 message = "User with that Email Exists"
                 status = "fail"
             else:
