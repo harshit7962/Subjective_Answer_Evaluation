@@ -291,6 +291,11 @@ t2 = '''
 Boyce–Codd Normal Form (BCNF) is based on functional dependencies that take into account all candidate keys in a relation; however, BCNF also has additional constraints compared with the general definition of 3NF. A relation is in BCNF if, X is superkey for every functional dependency (FD) X?Y in given relation. In other words, A relation is in BCNF, if and only if, every determinant is a Form (BCNF) candidate key.
 '''
 
+@app.after_request
+def after_request(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return response
+
 @app.route('/')
 def index():
     return render_template('index.ejs')
@@ -309,11 +314,6 @@ Need to implement contact.ejs and link to database
 @app.route('/contact')
 def contact():
     return render_template('contact.ejs')
-
-@app.after_request
-def after_request(response):
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    return response
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
@@ -335,7 +335,6 @@ def signup():
 
         elif password != confirm_password:
             message = "Passwords do not match"
-            print(message)
 
         else:
             # Generating Encrypted Password along with Creation Time
@@ -353,7 +352,7 @@ def signup():
 
             except Exception as ex:
                 message = f"{ex}"
-    flash(message)
+    
     return render_template("signup.ejs", message=message)
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -400,22 +399,19 @@ def logout():
     
     return redirect(url_for("index"))
 
-@app.route("/test/<string:test_slug>", methods = ["GET"])
-def test_route(test_slug):
+@app.route("/test/<string:test_slug>/<int:question_number>", methods = ["GET"])
+def test_route(test_slug, question_number=1):
     if "email" in session:
         test_number = db.test_details.find_one({"_id": ObjectId(test_slug)})["test_number"]
+        
+        questions = list(db.questionnaire_details.find({"test_number": test_number, "question_number": question_number}))
+        total_questions = db.questionnaire_details.count_documents({"test_number": test_number})
 
-        questionnaire = db.questionnaire_details.find({"test_number": test_number})
-
-        '''
-        TODO: replace the test_showquestion.html with a new logic here
-        we need to implement a logic such that each question is displayed individually
-
-        The idea is to keep a counter, which will contain the current question number
-        now if user presses prev button on the home page, then we pass the request through this route and decrease the counter
-        if the user preseses next btn, then we pass the request through this route and increase the counter
-        '''
-        return render_template("test_showquestion.html", questions = questionnaire)
+        return render_template("show_question.html",
+                               question = questions, 
+                               test_slug = test_slug, 
+                               total_questions = total_questions
+                            )
     return render_template("signin.html", message="You are not Logged In")
 
 app.run(debug=True)
