@@ -5,6 +5,7 @@ import json
 import os
 from flask_bcrypt import Bcrypt
 from datetime import datetime
+from bson import ObjectId
 
 # Similarity Module Imports
 import pandas as pd
@@ -401,11 +402,8 @@ def logout():
 
 @app.route("/test/<string:test_slug>", methods = ["GET"])
 def test_route(test_slug):
-    '''
-    TODO: replace the test_slug, with _id of each test, this can be done with the help of test_home.html currently
-    '''
     if "email" in session:
-        test_number = db.test_details.find_one({"test_slug": test_slug})["test_number"]
+        test_number = db.test_details.find_one({"_id": ObjectId(test_slug)})["test_number"]
 
         questionnaire = db.questionnaire_details.find({"test_number": test_number})
 
