@@ -389,7 +389,7 @@ def logged_in():
         '''
         TODO: replace the test_home.html with student home page containing all the tests available
         '''
-        return render_template("test_home.html", name = user["name"], tests = tests)
+        return render_template("test_home.html", user = user, tests = tests)
     return render_template("signin.html", message="You are not Logged In")
 
 @app.route('/logout')
@@ -399,10 +399,24 @@ def logout():
     
     return redirect(url_for("index"))
 
-@app.route("/test/<string:test_slug>/<int:question_number>", methods = ["GET"])
+@app.route("/test/<string:test_slug>/<int:question_number>", methods = ["GET", "POST"])
 def test_route(test_slug, question_number=1):
     if "email" in session:
+        already_present = False
         test_number = db.test_details.find_one({"_id": ObjectId(test_slug)})["test_number"]
+
+        # Check if current question is already attempted by the candidate
+        current_size = db.answer_collection.count_documents({"email": session["email"], "test_number": test_number, "question_number": question_number})
+        if(current_size >0):
+            already_present = True
+
+        if request.method == "POST":
+            answer = request.form.get("answer")
+
+            if(already_present):
+                db.answer_collection.update_one({"email": session["email"], "test_number": test_number, "question_number": question_number}, {"$set": {"answer": answer}})
+            else:
+                db.answer_collection.insert_one({"email": session["email"], "test_number": test_number, "question_number": question_number, "answer": answer})
         
         questions = list(db.questionnaire_details.find({"test_number": test_number, "question_number": question_number}))
         total_questions = db.questionnaire_details.count_documents({"test_number": test_number})
