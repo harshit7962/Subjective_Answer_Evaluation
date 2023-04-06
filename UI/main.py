@@ -370,7 +370,7 @@ def login():
         if user:
             if bcrypt.check_password_hash(user["password"], password):
                 session["email"] = email
-                return redirect(url_for("logged_in"))
+                return redirect(url_for("exams"))
             else:
                 message = "Incorrect Password"
                 
@@ -379,17 +379,18 @@ def login():
             
     return render_template("signin.html", message=message)
 
-@app.route('/logged_in')
-def logged_in():
+@app.route('/exams')
+def exams():
     if "email" in session:
         user = db.student_details.find_one({"email": session["email"]})
 
         tests = db.test_details.find()
+        questions = db.questionnaire_details.find()
 
         '''
         TODO: replace the test_home.html with student home page containing all the tests available
         '''
-        return render_template("test_home.html", user = user, tests = tests)
+        return render_template("exam.html", user = user, tests = tests, questions = questions)
     return render_template("signin.html", message="You are not Logged In")
 
 @app.route('/logout')
