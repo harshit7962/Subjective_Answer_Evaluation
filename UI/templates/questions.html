@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,minimum-scale=1">
+
+        <title>Questions |  AssessMeNow</title>
+        <meta content="" name="description">
+        <meta content="" name="keywords">
+
+        <!-- Favicons -->
+        <link href="{{ url_for('static', filename='assets/img/favicon1.png' )}}" rel="icon">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style1.css' )}}">
+
+        <style>
+            @media (max-width: 415px) {
+                .copyright {
+                margin-top: 30px;
+            }
+            }
+
+            .copyright {
+                margin-top: 20px;
+            }
+
+            .wrapper {
+                width: 100%;
+                padding-right: 15px;
+                padding-left: 15px;
+                margin-right: auto;
+                margin-left: auto;
+            }
+
+            @media (min-width: 576px) {
+                .wrapper {
+                max-width: 540px;
+            }
+            }
+
+            @media (min-width: 768px) {
+                .wrapper {
+                max-width: 720px;
+            }
+            }
+
+            @media (min-width: 992px) {
+                .wrapper {
+                max-width: 960px;
+            }
+            }
+
+            @media (min-width: 1200px) {
+                .wrapper {
+                max-width: 1140px;
+            }
+            }
+
+            p.copy-footer-29 a {
+                color: #495057;
+            }
+
+            p.copy-footer-29 a:hover {
+                color: #4361ee;
+            }
+        </style>
+	</head>
+	<body>
+		<form class="survey-form" method="post" action="/test/{{test_slug}}/{{question[0].question_number}}">		
+		<!-- place code here -->
+            <center><h1><i class="far fa-list-alt"></i>Exam - <span style="color: blue">{{ test_name.upper() }}</span> - Questions</h1></center>
+
+            <div class="steps">
+            {% for n in range(total_questions) %}
+                {% if (n+1)==(question[0]["question_number"]) %}
+                    <div class="step current"></div>
+                {% else %}
+                    <div class="step"></div>
+                {% endif %}
+            {% endfor %}
+            </div>
+
+            <div class="step-content current" data-step="1">
+                <div class="fields">
+                    <h3>Q<span>{{question[0]["question_number"]}}.</span> {{ question[0]["question"]}} </h3>
+                    
+
+                    <p>Please Write the Answer below:-</p>
+                    <div class="group">
+                        <textarea id="answer" name="answer" rows="25" placeholder="Enter your answer here"></textarea>
+                        	
+                    </div>					
+                </div>
+                <center>
+                {% if question[0].question_number != 1 %}
+                <div class="buttons" style="display: inline-block;">
+                    <a href="/test/{{test_slug}}/{{question[0].question_number-1}}" class="btn" data-set-step="2">Previous Question</a>
+                </div>
+                {% endif %}
+                {% if question[0].question_number != total_questions %}
+                <div class="buttons" style="display: inline-block;">
+                    <a href="/test/{{test_slug}}/{{question[0].question_number+1}}" class="btn" data-set-step="2">Next Question</a>
+                </div>
+                {% endif %}
+                {% if question[0].question_number == total_questions %}
+                <div class="buttons .btn-success" style="display: inline-block; background-color: lime;">
+                    <a href="/test/visualize/{{test_slug}}/" class="btn" data-set-step="2">Submit Exam</a>
+                </div>
+                {% endif %}
+                </center>
+                
+            </div>
+		</form>
+        
+
+        <div class="copyright text-center">
+            <div class="wrapper">
+                <center> <p class="copy-footer-29">© Copyright <b style="color:blue;">AssessMeNow.AI</b> . All rights reserved </p></center>
+            </div>
+        </div>
+        <br><br>
+	</body>
+</html>
