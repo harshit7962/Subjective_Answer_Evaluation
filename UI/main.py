@@ -402,7 +402,9 @@ def logout():
 def test_route(test_slug, question_number=1):
     if "email" in session:
         already_present = False
-        test_number = db.test_details.find_one({"_id": ObjectId(test_slug)})["test_number"]
+        test = db.test_details.find_one({"_id": ObjectId(test_slug)})
+        test_number = test["test_number"]
+        test_name = test["test_name"]
 
         # Check if current question is already attempted by the candidate
         current_size = db.answer_collection.count_documents({"email": session["email"], "test_number": test_number, "question_number": question_number})
@@ -420,11 +422,15 @@ def test_route(test_slug, question_number=1):
         questions = list(db.questionnaire_details.find({"test_number": test_number, "question_number": question_number}))
         total_questions = db.questionnaire_details.count_documents({"test_number": test_number})
 
-        return render_template("show_question.html",
+        
+        return render_template("questions.html",
                                question = questions, 
                                test_slug = test_slug, 
+                               test_name = test_name, 
                                total_questions = total_questions
                             )
+        
+
     return render_template("signin.html", message="You are not Logged In")
 
 @app.route("/submit")
