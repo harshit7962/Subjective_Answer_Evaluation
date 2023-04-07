@@ -381,16 +381,23 @@ def login():
 
 @app.route('/exams')
 def exams():
+    message = ""
     if "email" in session:
         user = db.student_details.find_one({"email": session["email"]})
 
         tests = db.test_details.find()
         questions = db.questionnaire_details.find()
 
-        '''
-        TODO: replace the test_home.html with student home page containing all the tests available
-        '''
-        return render_template("exam.html", user = user, tests = tests, questions = questions)
+        if "message" in session:
+            message = session["message"]
+            session.pop("message", None)
+
+        return render_template("exam.html",
+                                user = user,
+                                tests = tests,
+                                questions = questions,
+                                message = message
+                            )
     return render_template("signin.html", message="You are not Logged In")
 
 @app.route('/logout')
@@ -428,5 +435,14 @@ def test_route(test_slug, question_number=1):
                                total_questions = total_questions
                             )
     return render_template("signin.html", message="You are not Logged In")
+
+@app.route("/submit")
+def submit():
+    if "email" in session:
+        message = "You have submitted your test successfully."
+        session["message"] = message
+
+        return redirect(url_for("exams"))
+
 
 app.run(debug=True)
