@@ -97,11 +97,18 @@
                     <a href="/test/{{test_slug}}/{{question[0].question_number-1}}" class="btn" data-set-step="2">Previous Question</a>
                 </div>
                 {% endif %}
+
+                <div class="buttons" style="display: inline-block;">
+                    <button type="submit" class="btn">Submit Answer</button>
+                </div>
+
                 {% if question[0].question_number != total_questions %}
                 <div class="buttons" style="display: inline-block;">
                     <a href="/test/{{test_slug}}/{{question[0].question_number+1}}" class="btn" data-set-step="2">Next Question</a>
                 </div>
                 {% endif %}
+
+                <br>
                 {% if question[0].question_number == total_questions %}
                 <div class="buttons .btn-success" style="display: inline-block; background-color: lime;">
                     <a href="/test/visualize/{{test_slug}}/" class="btn" data-set-step="2">Submit Exam</a>
