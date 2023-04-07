@@ -282,15 +282,6 @@ class keyword():
 
         return self.scoring_unit(yake_keyword_model, yake_keyword_user)
 
-    
-t1 = '''
-BCNF stands for Boyce-Codd Normal Form, which is a normal form used in database normalization. BCNF is based on the concept of functional dependencies between attributes in a relation.A relation is said to be in BCNF if and only if every determinant (i.e., every candidate key) of the relation is a superkey of the relation. In simpler terms, a relation is in BCNF if every non-trivial functional dependency in the relation has a determinant that is a candidate key. The process of decomposing a relation into smaller, normalized relations is called normalization. Normalization is important for database design because it helps to eliminate redundancy, minimize data inconsistencies, and ensure data integrity. However, it is important to note that normalization is not always the best solution, and it may not always be possible to achieve BCNF.
-'''
-
-t2 = '''
-Boyce–Codd Normal Form (BCNF) is based on functional dependencies that take into account all candidate keys in a relation; however, BCNF also has additional constraints compared with the general definition of 3NF. A relation is in BCNF if, X is superkey for every functional dependency (FD) X?Y in given relation. In other words, A relation is in BCNF, if and only if, every determinant is a Form (BCNF) candidate key.
-'''
-
 @app.after_request
 def after_request(response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
@@ -441,8 +432,56 @@ def submit():
     if "email" in session:
         message = "You have submitted your test successfully."
         session["message"] = message
-
+        '''
+        answer_collection se answer fetch karne hai, is particular test ke
+        fir model answer fetch karne hai from questionnaire details se
+        add similarity keyword ner
+        and fir model se score fetch karna hai
+        fir update bhi karna hai answer collection
+        '''
         return redirect(url_for("exams"))
 
+@app.route("/results")
+def results():
+    if "email" in session:
+        tests = db.test_details.find()
+        attempted_tests = []
+
+        for test in tests:
+            test_number = test["test_number"]
+
+            attempted = db.answer_collection.find_one({"email": session["email"], "test_number": test_number})
+            
+            if attempted:
+                test = db.test_details.find_one({"test_number": test_number})
+                attempted_tests.append(test)
+        
+        user = db.student_details.find_one({"email": session["email"]})
+
+        return render_template("results.html", 
+                               tests = attempted_tests, 
+                               user = user
+                            )
+    return render_template("signin.html", message="You are not Logged In")
+
+@app.route("/result/<string:test_slug>/<int:question_number>")
+def show_result(test_slug, question_number=1):
+    if "email" in session:
+        test_number = db.test_details.find_one({"_id": ObjectId(test_slug)})["test_number"]
+        model_answer_base = db.questionnaire_details.find_one({"test_number": test_number, "question_number": question_number})
+        user_answer_base = db.answer_collection.find_one({"test_number": test_number, 
+                                                          "question_number": question_number, 
+                                                          "email": session["email"]
+                                                        })
+        
+        total_questions = db.questionnaire_details.count_documents({"test_number": test_number})
+
+        return render_template("show_result.html",
+                               modal = model_answer_base,
+                               user = user_answer_base,
+                               total_questions = total_questions,
+                               test_slug = test_slug
+                            )
+    return render_template("signin.html", message="You are not Logged In")
 
 app.run(debug=True)
