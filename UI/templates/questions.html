@@ -111,7 +111,7 @@
                 <br>
                 {% if question[0].question_number == total_questions %}
                 <div class="buttons .btn-success" style="display: inline-block; background-color: lime;">
-                    <a href="/submit" class="btn" data-set-step="2">Submit Exam</a>
+                    <a href="/submit" class="btn" data-set-step="2" onclick="myFunction()">Submit Exam</a>
                 </div>
                 {% endif %}
                 </center>
@@ -126,5 +126,11 @@
             </div>
         </div>
         <br><br>
+		
+        <script>
+            function myFunction() {
+              alert("Your Examination has been Submitted Successfully.");
+            }
+        </script>
 	</body>
 </html>
