@@ -101,14 +101,14 @@
               <ul>
                 <li><a class="active" href="/exams">Exam</a></li>
                 <li><a href="/results">Marks</a></li>
-                <li><a href="/contact">Contact Us</a></li>
+                <li><a href="#">Contact Us</a></li>
                 <li class="dropdown">
                     <a href="#" data-toggle="dropdown" class="dropdown-toggle user-action" style="text-decoration: none;"><img src="static/image/navImg.jpg" style="padding-right: 5px;" class="avatar" alt="Avatar">{{ user['name'] }}<b class="caret"> </b></a>
 				<ul class="dropdown-menu">
 					<li><a href="#" style="text-decoration: none;"><i class="fa fa-id-card-o" style="color: black;"></i>{{ user['email'] }}</a></li>
 					<a href="#" style="text-decoration: none;"><i class="fa fa-shield" style="color: black;"></i>{{ user['author'] }}</a></li>
 					<li class="divider"></li>
-					<li><a href="#"><i class="fa fa-sign-out" style="color: black;"></i>Logout </a></li>
+					<li><a href="logout"><i class="fa fa-sign-out" style="color: black;"></i>Logout </a></li>
 				</ul>
                 </li>
             </ul>
@@ -167,7 +167,7 @@
                                   <button class="button button2"><a href="/test/{{ test._id }}/1" style="text-decoration: none; color: white;">Attempt Exam</a></button> 
                                   <br>
                                 {% else %}  
-                                  <button class="button button2">Attempt Exam</button> 
+                                  <button class="button button2" style="opacity: 0.6;cursor: not-allowed;">Attempt Exam</button> 
                                   <br>
                                 {% endif %}
                               
