@@ -473,7 +473,9 @@ def results():
 @app.route("/result/<string:test_slug>/<int:question_number>")
 def show_result(test_slug, question_number=1):
     if "email" in session:
-        test_number = db.test_details.find_one({"_id": ObjectId(test_slug)})["test_number"]
+        test = db.test_details.find_one({"_id": ObjectId(test_slug)})
+        test_number = test["test_number"]
+        test_name = test["test_name"]
         model_answer_base = db.questionnaire_details.find_one({"test_number": test_number, "question_number": question_number})
         user_answer_base = db.answer_collection.find_one({"test_number": test_number, 
                                                           "question_number": question_number, 
@@ -482,11 +484,12 @@ def show_result(test_slug, question_number=1):
         
         total_questions = db.questionnaire_details.count_documents({"test_number": test_number})
 
-        return render_template("show_result.html",
+        return render_template("exam_results.html",
                                modal = model_answer_base,
                                user = user_answer_base,
                                total_questions = total_questions,
-                               test_slug = test_slug
+                               test_slug = test_slug,
+                               test_name = test_name
                             )
     return render_template("signin.html", message="You are not Logged In")
 
