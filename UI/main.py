@@ -289,6 +289,15 @@ def after_request(response):
 
 @app.route('/')
 def index():
+    if "email" in session:
+        session.pop("email", None)
+
+    if "message" in session:
+        session.pop("message", None)
+    
+    if "test_number" in session:
+        session.pop("test_number", None)
+
     return render_template('index.ejs')
 
 @app.route('/learn')
@@ -310,6 +319,12 @@ def contact():
 def signup():
     if "email" in session:
         session.pop("email", None)
+
+    if "message" in session:
+        session.pop("message", None)
+    
+    if "test_number" in session:
+        session.pop("test_number", None)
 
     message = ""   
     if request.method == 'POST':
@@ -351,6 +366,12 @@ def login():
     message = None
     if "email" in session:
         session.pop("email", None)
+
+    if "message" in session:
+        session.pop("message", None)
+    
+    if "test_number" in session:
+        session.pop("test_number", None)
 
     if request.method == "POST":
         email = request.form.get("email")
@@ -405,6 +426,8 @@ def test_route(test_slug, question_number=1):
         test = db.test_details.find_one({"_id": ObjectId(test_slug)})
         test_number = test["test_number"]
         test_name = test["test_name"]
+
+        session["test_number"] = test_number
 
         # Check if current question is already attempted by the candidate
         current_size = db.answer_collection.count_documents({"email": session["email"], "test_number": test_number, "question_number": question_number})
@@ -492,5 +515,38 @@ def show_result(test_slug, question_number=1):
                                test_name = test_name
                             )
     return render_template("signin.html", message="You are not Logged In")
+
+
+# Computation of result
+@app.route("/computation")
+def computation():
+    if "email" in session:
+        # We will do our computation here
+        if "test_number" in session:
+            test_number = session["test_number"]
+            session.pop("test_number", None)
+
+            # Count the number of quetions in attempted test
+            total_questions = db.questionnaire_details.count_documents({"test_number": test_number})
+
+            # For each question we get user answer and modal answer and print them
+            for i in range(total_questions):
+                # user answer
+                user_answer = db.answer_collection.find_one({"test_number": test_number,
+                                                             "question_number": i+1,
+                                                             "email": session["email"]
+                                                            })["answer"]
+                
+                # modal answer
+                modal_answer = db.questionnaire_details.find_one({"test_number": test_number, "question_number": i+1})["modal_answer"]
+                
+                # Need to implement module wise computation here
+                print("\n\n\n\nUser Answer:", user_answer)
+                print("\n\n\n\nModal Answer:", modal_answer)
+
+        else:
+            print("\n\n\n\nTest Not Attempted")
+        
+    return render_template("signin.html", message="You are logged in")
 
 app.run(debug=True)
