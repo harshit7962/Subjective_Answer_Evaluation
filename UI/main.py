@@ -540,9 +540,27 @@ def computation():
                 # modal answer
                 modal_answer = db.questionnaire_details.find_one({"test_number": test_number, "question_number": i+1})["modal_answer"]
                 
+                print("\n\nFor question number", i, "the scores are: ", end=" ")
+
+
                 # Need to implement module wise computation here
-                print("\n\n\n\nUser Answer:", user_answer)
-                print("\n\n\n\nModal Answer:", modal_answer)
+                similarity_score = similarity(modal_answer, user_answer).similarity_score()
+                ner_score = ner(modal_answer, user_answer).ner_score()
+                keyword_score = keyword(modal_answer, user_answer).keyword_score()
+                
+                print(similarity_score, ner_score, keyword_score)
+
+                db.answer_collection.update_one({
+                    "test_number": test_number,
+                    "question_number": i+1,
+                    "email": session["email"]
+                }, {
+                    "$set": {
+                        "similarity_score": similarity_score,
+                        "ner_score": ner_score,
+                        "keyword_score": keyword_score
+                    }
+                })
 
         else:
             print("\n\n\n\nTest Not Attempted")
