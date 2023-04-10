@@ -540,8 +540,7 @@ def computation():
                 # modal answer
                 modal_answer = db.questionnaire_details.find_one({"test_number": test_number, "question_number": i+1})["modal_answer"]
                 
-                print("\n\nFor question number", i, "the scores are: ", end=" ")
-
+                print("\n\nFor question number", i+1, "the scores are: ", end=" ")
 
                 # Need to implement module wise computation here
                 similarity_score = similarity(modal_answer, user_answer).similarity_score()
