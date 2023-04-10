@@ -544,8 +544,6 @@ def computation():
                 
                 # modal answer
                 modal_answer = db.questionnaire_details.find_one({"test_number": test_number, "question_number": i+1})["modal_answer"]
-                
-                print("\n\nFor question number", i, "the scores are: ", end=" ")
 
                 # Need to implement module wise computation here
                 similarity_score = similarity(modal_answer, user_answer).similarity_score()
@@ -557,6 +555,22 @@ def computation():
                 ner_score = round(ner_score, 1)
                 keyword_score = round(keyword_score, 1)
 
+                # Here we need to handle edge cases, in case the scores are greater than 10 or less than 0
+                if similarity_score < 0:
+                    similarity_score = 0.0
+                elif similarity_score > 10:
+                    similarity_score = 10.0
+
+                if ner_score < 0:
+                    ner_score = 0.0
+                elif ner_score > 10:
+                    ner_score = 10.0
+                
+                if keyword_score < 0:
+                    keyword_score = 0.0
+                elif keyword_score > 10:
+                    keyword_score = 10.0
+
                 # Final Scoring
                 input = [[keyword_score, similarity_score, ner_score]]
                 final_score = model.predict(input)[0][0]
@@ -564,9 +578,10 @@ def computation():
                 
                 final_score = round(final_score, 1)
 
-                # Here we need to handle edge cases, in case the scores are greater than 10 or less than 0
-
-                print(similarity_score, ner_score, keyword_score)
+                if final_score < 0:
+                    final_score = 0.0
+                elif final_score > 10:
+                    final_score = 10.0
 
                 # Updating the scores to db
                 db.answer_collection.update_one({
@@ -582,8 +597,7 @@ def computation():
                     }
                 })
 
-        else:
-            print("\n\n\n\nTest Not Attempted")
+                print("\n\n\n\nTest Evaluation Completed\n\n\n\n")
         
     return render_template("signin.html", message="You are logged in")
 
