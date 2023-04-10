@@ -6,6 +6,7 @@ import os
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 from bson import ObjectId
+from keras.models import load_model
 
 # Similarity Module Imports
 import pandas as pd
@@ -15,6 +16,7 @@ from nltk.tokenize import sent_tokenize
 from sentence_transformers import SentenceTransformer
 import torch
 from transformers import T5Tokenizer,T5ForConditionalGeneration
+
 # NER Module Imports
 import spacy
 import spacy_transformers
@@ -149,7 +151,7 @@ class ner():
         count = 0
 
         if(n == 0):
-            return 10
+            return 10.0
         
         for i in range(n):
             if(modal_entity[i] in user_entity):
@@ -529,6 +531,9 @@ def computation():
             # Count the number of quetions in attempted test
             total_questions = db.questionnaire_details.count_documents({"test_number": test_number})
 
+            # Load our saved model
+            model = load_model('model.h5')
+
             # For each question we get user answer and modal answer and print them
             for i in range(total_questions):
                 # user answer
@@ -540,15 +545,30 @@ def computation():
                 # modal answer
                 modal_answer = db.questionnaire_details.find_one({"test_number": test_number, "question_number": i+1})["modal_answer"]
                 
-                print("\n\nFor question number", i+1, "the scores are: ", end=" ")
+                print("\n\nFor question number", i, "the scores are: ", end=" ")
 
                 # Need to implement module wise computation here
                 similarity_score = similarity(modal_answer, user_answer).similarity_score()
                 ner_score = ner(modal_answer, user_answer).ner_score()
                 keyword_score = keyword(modal_answer, user_answer).keyword_score()
+
+                # Rounding of the individaul scores
+                similarity_score = round(similarity_score, 1)
+                ner_score = round(ner_score, 1)
+                keyword_score = round(keyword_score, 1)
+
+                # Final Scoring
+                input = [[keyword_score, similarity_score, ner_score]]
+                final_score = model.predict(input)[0][0]
+                final_score = final_score.item()
                 
+                final_score = round(final_score, 1)
+
+                # Here we need to handle edge cases, in case the scores are greater than 10 or less than 0
+
                 print(similarity_score, ner_score, keyword_score)
 
+                # Updating the scores to db
                 db.answer_collection.update_one({
                     "test_number": test_number,
                     "question_number": i+1,
@@ -557,7 +577,8 @@ def computation():
                     "$set": {
                         "similarity_score": similarity_score,
                         "ner_score": ner_score,
-                        "keyword_score": keyword_score
+                        "keyword_score": keyword_score,
+                        "final_score": final_score
                     }
                 })
 
