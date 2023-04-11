@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="static/assets/img/favicon1.png" rel="icon">
+    <title>Exams</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,700,700i&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="static/assets/vendor/animate.css/animate.min.css" rel="stylesheet">
+    <link href="static/assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="static/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="static/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link href="static/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://kit.fontawesome.com/950cae1917.js" crossorigin="anonymous"></script>
+
+    <link href="static/assets/css/style.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    {% if message %}
+        <script>
+            alert("{{ message }}");
+        </script>
+    {% endif %}
+
+    <style>
+        .bcontent {
+            margin-top: 10px; 
+        }
+        .dropdown.open > a {
+		    background: none !important;
+	    }
+	    .dropdown-menu {
+		    border-radius: 1px;
+		    border-color: #e5e5e5;
+		    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+	    }
+	    .dropdown-menu li a {
+		    color: #777;
+		    padding: 8px 20px;
+		    line-height: normal;
+	    }
+	    .dropdown-menu li a:hover, .dropdown-menu li a:active {
+		    color: #333;
+	    }	
+	    .dropdown-menu .material-icons {
+		    font-size: 21px;
+		    line-height: 16px;
+		    vertical-align: middle;
+		    margin-top: -2px;
+	    }
+      .button {
+      background-color: #4CAF50; /* Green */
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      -webkit-transition-duration: 0.4s; /* Safari */
+      transition-duration: 0.4s;
+      border-radius: 10px;
+      font-size: 20px;
+      margin-top: 30px;
+      margin-right: 0px;
+      }
+
+      .button2:hover {
+      box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+      }
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid">
+        <!-- ======= Header ======= -->
+        <header id="header" class="fixed-top d-flex align-items-center">
+          <div class="container d-flex justify-content-between align-items-center">
+    
+            <div class="logo">
+              <h1 class="text-light"><a href="/"><span style="color:mistyrose;">AssessMeNow.AI</span></a></h1>
+            </div>
+    
+            <nav id="navbar" class="navbar">
+              <ul>
+                <li><a class="active" href="/exams">Exam</a></li>
+                <li><a href="/results">Marks</a></li>
+                <li><a href="/contact">Contact Us</a></li>
+                <li class="dropdown">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle user-action" style="text-decoration: none;"><img src="static/image/navImg.jpg" style="padding-right: 5px;" class="avatar" alt="Avatar">{{ user['name'] }}<b class="caret"> </b></a>
+				<ul class="dropdown-menu">
+					<li><a href="#" style="text-decoration: none;"><i class="fa fa-id-card-o" style="color: black;"></i>{{ user['email'] }}</a></li>
+					<a href="#" style="text-decoration: none;"><i class="fa fa-shield" style="color: black;"></i>{{ user['author'] }}</a></li>
+					<li class="divider"></li>
+					<li><a href="logout"><i class="fa fa-sign-out" style="color: black;"></i>Logout </a></li>
+				</ul>
+                </li>
+            </ul>
+            <i class="bi bi-list mobile-nav-toggle"></i>
+          </nav>
+          
+          <!-- .navbar -->
+    
+          </div>
+        </header>
+        <!-- End Header -->
+      </div>
+
+    <main id="main">  
+        <!-- ======= Our Team Section ======= -->
+        <section class="breadcrumbs">
+            <div class="container">
+  
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2><strong>My Exams</strong></h2>
+                    <ol>
+                        <li>Home</a></li>
+                        <li><a href="/exams">Exams</a></li>
+                    </ol>
+                </div>
+  
+            </div>
+        </section><!-- End Our Team Section -->
+
+    <div class="container bcontent">
+      {% for test in tests %}
+        <div class="card">
+            <div class="row no-gutters">
+                <div class="col-sm-5">
+                   <img src="static/image/abc.jpg" width="75%">
+                </div>
+                <div class="col-sm-7">
+                    <div class="card-body">
+                        <h4 style="display: inline-block;">Exam Name :&nbsp; </h4><h5 style="display: inline-block; color: blue;" class="card-title">{{ test.test_name.upper() }}</h5>
+                        <p class="card-text">
+                  
+                                <strong>Test Id:</strong> {{ test.test_number }}<br>
+                                {% set count = namespace(value=0) %}
+                                {% for x in questions %}
+                                  {% if x.test_number==test.test_number %}
+                                    {% set count.value = count.value + 1 %}
+                                  {% endif %}
+                                {% endfor %}
+                                <strong>Total Questions:</strong> {{ count.value }}<br>
+                                <strong>Maximum Marks:</strong> {{ count.value * 10 }} <br>
+                                <strong>Attempt Time Limit:</strong> {{ count.value * 10 }} minutes<br>
+                                
+                                <strong>Created on:</strong> test.test_created <br>
+
+                                {% if count.value>0 %}
+                                  <button class="button button2"><a href="/test/{{ test._id }}/1" style="text-decoration: none; color: white;">Attempt Exam</a></button> 
+                                  <br>
+                                {% else %}  
+                                  <button class="button button2" style="opacity: 0.6;cursor: not-allowed;">Attempt Exam</button> 
+                                  <br>
+                                {% endif %}
+                              
+                        </p>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+      {% endfor %} 
+    </div><br><br>
+    
+</main>
+    
+<!-- ======= Footer ======= -->
+<footer id="footer" data-aos="fade-up" data-aos-easing="ease-in-out" data-aos-duration="500">
+
+  <div class="footer-newsletter">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6">
+          <h4>Our Newsletter</h4>
+          <p>Subscribe for the latest news and updates.</p>
+        </div>
+        <div class="col-lg-6">
+          <form action="" method="post">
+            <input type="email" name="email"><input type="submit" value="Subscribe">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-top">
+    <div class="container">
+      <div class="row">
+
+        <div class="col-lg-3 col-md-6 footer-links">
+          <h4>Useful Links</h4>
+          <ul>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Home</a></li>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">About us</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-3 col-md-6 footer-links">
+          <h4>Our Services</h4>
+          <ul>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Create Exams</a></li>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Schedule Appointment</a></li>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Careers</a></li>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">University Relations</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-3 col-md-6 footer-contact">
+          <h4>Contact Us</h4>
+          <p>
+            VIT, Vellore - 632014<br>
+            Tamil Nadu <br><br>
+            <strong>Phone:</strong> +91 9559165096<br>
+            <strong>Email:</strong> raghav.agrawal2019@vitstudent.ac.in<br>
+          </p>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6 footer-info">
+          <h3>About AssessMeNow.AI</h3>
+          <p>AssessMeNow.AI provides a platform for Students, Teachers / Faculties to create assessments from anywhere in the world, and attempt the exam remotely. Assessments are graded using AI, hence fair.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="copyright">
+      &copy; Copyright <strong><span>AssessMeNow.AI</span></strong>. All Rights Reserved
+    </div>
+    <div class="credits">
+      Designed by <a href="https://kind-hodgkin-4aa602.netlify.app/">Raghav | Harshit | Shrishail</a>
+    </div>
+  </div>
+</footer><!-- End Footer -->
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="static/assets/vendor/aos/aos.js"></script>
+  <script src="static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="static/assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="static/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="static/assets/vendor/php-email-form/validate.js"></script>
+  <script src="static/assets/vendor/purecounter/purecounter.js"></script>
+  <script src="static/assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="static/assets/vendor/waypoints/noframework.waypoints.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="static/assets/js/main.js"></script>
+
+  <!-- AJAX Request to help with computation -->
+  <script>
+    window.onload = function() {
+      fetch('computation')
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        })
+    }
+  </script>
+</body>
+
+</html>
