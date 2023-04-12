@@ -29,6 +29,7 @@
 
   <!-- Custom Style Sheet -->
   <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style1.css') }}">
 
   <!-- Bootstrap -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
@@ -162,7 +163,7 @@
   </div>
 
   <!-- Main Section -->
-  <main id="main">
+  <main id="main" class="main-content">
     <!-- Our Team Section -->
     <section class="breadcrumbs">
       <div class="container">
@@ -218,6 +219,12 @@
         </div>
       {% endfor %}
     </div><br><br>
+
+    <div class="add-test-wrapper">
+      <a href="/add-test" class="add-test-button">
+        <span class="add-test-plus-btn">+</span>
+      </a>
+  </div> 
   </main>
 
   <!-- Footer -->
@@ -304,18 +311,6 @@
   <script src="static/assets/vendor/waypoints/noframework.waypoints.js"></script>
 
   <!-- Template Main JS File -->
-  <script src="static/assets/js/main.js"></script>
-
-  <!-- AJAX Request to help with computation -->
-  <script>
-    window.onload = function() {
-      fetch('computation')
-        .then(response => response.json())
-        .then(data => {
-          console.log(data);
-        })
-    }
-  </script>
-  
+  <script src="static/assets/js/main.js"></script>  
 </body>
 </html>

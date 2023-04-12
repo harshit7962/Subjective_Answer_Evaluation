@@ -312,3 +312,59 @@ h1 i {
 #question {
     height: 50px;
 }
+
+/* Add Test Button CSS */
+.add-test-wrapper {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+  }
+  
+  .add-test-button {
+    display: inline-block;
+    position: relative;
+    width: 52px;
+    height: 52px;
+    line-height: 52px;
+    text-align: center;
+    background-color: #7fb800;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 30px;
+    font-weight: bold; /* added font-weight */
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    margin-right: 10px;
+  }
+  
+  .add-test-button:hover {
+    transform: scale(1.15);
+    text-decoration: none;
+    color: #fff;
+  }
+  
+  .add-test-button:hover .add-test-plus-btn:before {
+    content: "ADD TEST";
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #7fb800;
+    color: #fff;
+    font-weight: bold;
+    padding: 0 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .add-test-button:hover .add-test-plus-btn:before {
+    opacity: 1;
+    visibility: visible;
+    bottom: calc(100% + 6px);
+  }
+  
