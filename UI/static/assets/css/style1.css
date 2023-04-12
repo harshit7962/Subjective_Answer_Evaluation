@@ -308,3 +308,7 @@ h1 i {
 .survey-form .result p {
     font-weight: 500;
 }
+
+#question {
+    height: 50px;
+}

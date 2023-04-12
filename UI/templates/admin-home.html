@@ -195,7 +195,7 @@
                 </h5>
 
                 <p class="card-text">
-                  <strong>Test Id:</strong> {{ test.test_number }}</br>
+                  <strong>Test Id: </strong> {{ test.test_number }}</br>
 
                   {% set count = namespace(value=0) %}
                   {% for x in questions %}
@@ -204,11 +204,11 @@
                     {% endif %}
                   {% endfor %}
 
-                  <strong>Total Questions:</strong>{{ count.value }}<br>
-                  <strong>Maximum Marks:</strong>{{ count.value * 10 }} <br>
-                  <strong>Attempt Time Limit:</strong>{{ count.value * 10 }} minutes <br>
+                  <strong>Total Questions: </strong>{{ count.value }}<br>
+                  <strong>Maximum Marks: </strong>{{ count.value * 10 }} <br>
+                  <strong>Attempt Time Limit: </strong>{{ count.value * 10 }} minutes <br>
 
-                  <strong>Created On:</strong> test.test_created <br>
+                  <strong>Created On: </strong> test.test_created <br>
 
                   <button class="button button2"><a href="/set-test/{{ test._id }}/1" style="text-decoration: none; color: white;">Edit Exam</a></button> <br>
                 </p>

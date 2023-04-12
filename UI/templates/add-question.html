@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Add Questions | AssessMeNow</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='assets/img/favicon1.png') }}" type="image/x-icon">
+    
+    <!-- CSS and FontAwesome -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style1.css') }}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+
+    <!-- styles -->
+    <style>
+        @media (max-width: 415px) {
+            .copyright {
+                margin-top: 30px;
+            }
+        }
+
+        .copyright {
+            margin-top: 20px;
+        }
+
+        .wrapper {
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        @media (min-width: 576px) {
+            .wrapper {
+                max-width: 540px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .wrapper {
+                max-width: 720px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .wrapper {
+                max-width: 960px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .wrapper {
+                max-width: 1140px;
+            }
+        }
+
+        p.copy-footer-29 a {
+            color: #495057;
+        }
+
+        p.copy-footer-29 a:hover {
+            color: #4361ee;
+        }
+    </style>
+</head>
+<body>
+    <form action="/set-test/{{test._id}}/{{total_questions+1}}" method="post" class="survey-form">
+        <center>
+            <h1>
+                <i class="fa fa-list-alt"></i>
+                Add Question - <span style="color: blue;">{{ test.test_name.upper() }} </span>
+            </h1>
+        </center>
+
+        <div class="step-content current" data-step="1">
+            <div class="fields">
+                <h3>
+                    Add as Question Number: <span> {{total_questions + 1}} </span>
+                </h3>
+
+                <h3>Add Question Below: </h3>
+                <div class="group">
+                    <textarea name="question" id="question" rows="5" placeholder="Enter your question here"></textarea>
+                </div>
+
+                <h3>Add Modal Answer: </h3>
+                <div class="group">
+                    <textarea name="answer" id="answer" rows="25" placeholder="Enter modal answer here"></textarea>
+                </div>
+            </div>
+            
+            <center>
+                <div class="buttons" style="display: inline-block;">
+                    <a href="/set-test/{{ test._id }}/{{ total_questions }}" class="btn" style="background-color: red;">Discard Changes</a>
+                </div>
+                <div class="buttons" style="display: inline-block;">
+                    <button type="submit" class="btn">Add Question</button>
+                </div>
+            </center>
+        </div>
+    </form>
+</body>
+</html>
