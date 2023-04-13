@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename = 'assets/img/favicon1.png')}}" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Test Name | AssesssMeNow.AI</title>
+
+    <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,700,700i&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{{url_for('static', filename='assets/vendor/animate.css/animate.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static', filename='assets/vendor/aos/aos.css')}}" rel="stylesheet">
+  <link href="{{url_for('static', filename='assets/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static', filename='assets/vendor/bootstrap-icons/bootstrap-icons.css')}}" rel="stylesheet">
+  <link href="{{url_for('static', filename='assets/vendor/boxicons/css/boxicons.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static', filename='assets/vendor/glightbox/css/glightbox.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static', filename='assets/vendor/swiper/swiper-bundle.min.css')}}" rel="stylesheet">
+
+  <!-- Material Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+  <script src="https://kit.fontawesome.com/950cae1917.js" crossorigin="anonymous"></script>
+
+  <!-- Custom Style Sheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style1.css') }}">
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+  <!-- JS files -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+  <style>
+    .bcontent {
+      margin-top: 10px;
+    }
+
+    .dropdown.open > a {
+      background: none !important;
+    }
+
+    .dropdown-menu {
+      border-radius: 1px;
+      border-color: #e5e5e5;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+
+    .dropdown-menu li a {
+      color: #777;
+      padding: 8px 20px;
+      line-height: normal;
+    }
+
+    .dropdown-menu li a:hover,
+    .dropdown-menu li a:active {
+      color: #333;
+    }
+
+    .dropdown-menu .material-icons {
+      font-size: 21px;
+      line-height: 16px;
+      vertical-align: middle;
+      margin-top: -2px;
+    }
+
+    .button {
+      background-color: #4caf50;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      -webkit-transition-duration: 0.4s;
+      transition-duration: 0.4s;
+      border-radius: 10px;
+      font-size: 20px;
+      margin-top: 30px;
+      margin-right: 0px;
+    }
+
+    .button2:hover {
+      box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    }
+
+    #name-body {
+        width: 1000px;
+        margin: auto;
+    }
+  </style>
+</head>
+<body id="name-body">
+    <form action="/add-test" method="post" class="survey-form">
+        <center>
+            <h1>
+                <i class="fa fa-list-alt"></i>
+                Add New Test
+            </h1>
+        </center>
+
+        <div class="step-content current" data-step="1">
+            <div class="fields">
+                <h3 style="display: inline-block;">
+                    Enter Test Name: 
+                </h3>
+                <div class="group">
+                    <input type="text" name="test_name" id="test_name" placeholder="Enter test name here">
+                </div>
+            </div>
+
+            <center>
+                <div class="buttons" style="display: inline-block;">
+                    <a class="btn" style="background-color: red;" href="/admin_home">Discard Changes</a>
+                </div>
+
+                <div class="buttons" style="display: inline-block;">
+                    <button type="submit" class="btn">Submit Changes</button>
+                </div>
+            </center>
+        </div>
+    </form>
+</body>
+</html>

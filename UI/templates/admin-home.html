@@ -6,7 +6,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+  <title>Dashboard | AssessMeNow.AI</title>
 
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,700,700i&display=swap" rel="stylesheet">
@@ -40,11 +40,11 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
   <!-- Adding Submission Alert -->
-  {% if test_created %}
-    <script>
-      alert("{{ test_created }}")
-    </script>
-  {% endif %}
+  {% if message %}
+        <script>
+            alert("{{ message }}");
+        </script>
+    {% endif %}
 
   <style>
     .bcontent {
@@ -208,8 +208,7 @@
                   <strong>Total Questions: </strong>{{ count.value }}<br>
                   <strong>Maximum Marks: </strong>{{ count.value * 10 }} <br>
                   <strong>Attempt Time Limit: </strong>{{ count.value * 10 }} minutes <br>
-
-                  <strong>Created On: </strong> test.test_created <br>
+                  <br>
 
                   <button class="button button2"><a href="/set-test/{{ test._id }}/1" style="text-decoration: none; color: white;">Edit Exam</a></button> <br>
                 </p>
