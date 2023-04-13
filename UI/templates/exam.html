@@ -162,7 +162,7 @@
                                 <strong>Maximum Marks:</strong> {{ count.value * 10 }} <br>
                                 <strong>Attempt Time Limit:</strong> {{ count.value * 10 }} minutes<br>
                                 
-                                <strong>Created on:</strong> test.test_created <br>
+                                <strong>Created on:</strong> {{test.create_on}} <br>
 
                                 {% if count.value>0 %}
                                   <button class="button button2"><a href="/test/{{ test._id }}/1" style="text-decoration: none; color: white;">Attempt Exam</a></button> 
