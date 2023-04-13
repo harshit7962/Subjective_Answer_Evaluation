@@ -316,8 +316,8 @@ h1 i {
 /* Add Test Button CSS */
 .add-test-wrapper {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 280px;
+    right: 80px;
     z-index: 999;
   }
   
