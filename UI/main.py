@@ -601,4 +601,222 @@ def computation():
         
     return render_template("signin.html", message="You are logged in")
 
+# ----------------------------------------------------------------
+# Admin Routes
+# ----------------------------------------------------------------
+
+@app.route("/admin-login", methods=["GET", "POST"])
+def admin_login():
+    message = None
+    if "faculty-email" in session:
+        session.pop("faculty-email", None)
+
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        print("\n\n\n\n\n\n")
+        print(email, password) 
+
+        faculty = db.faculty_details.find_one({"email": email})
+        
+
+        if faculty:
+            if bcrypt.check_password_hash(faculty["password"], password):
+                session["faculty_email"] = email
+                return redirect(url_for("admin_home"))
+            else:
+                message = "Incorrect Password"
+        else:
+            message = "Admin not found"
+
+    return render_template("admin-signin.html", message=message)
+
+@app.route("/admin_home")
+def admin_home():
+    if "faculty_email" in session:
+        message = ""
+        if "test_message" in session:
+            message = session["test_message"]
+            session.pop("test_message", None)
+
+        faculty = db.faculty_details.find_one({"email": session["faculty_email"]})
+        tests = db.test_details.find()
+        questions = db.questionnaire_details.find()
+
+        return render_template("admin-home.html",
+                               faculty = faculty,
+                               tests = tests,
+                               questions = questions,
+                               message = message
+                            )
+    
+    return render_template("signin.html", message = "You are not Logged in")
+
+# Need to add edit exam route
+@app.route("/set-test/<string:test_slug>/<int:question_number>", methods = ["GET", "POST"])
+def set_test(test_slug, question_number):
+    if "faculty_email" in session:
+        test = db.test_details.find_one({"_id": ObjectId(test_slug)})
+        test_number = test["test_number"]
+
+        question = db.questionnaire_details.find_one({"test_number": test_number, "question_number": question_number})
+        total_questions = db.questionnaire_details.count_documents({"test_number": test_number})
+        
+        if request.method == "POST":
+            if question_number == total_questions+1:
+                question = request.form.get("question")
+                modal_answer = request.form.get("answer")
+
+                db.questionnaire_details.insert_one({
+                    "test_number": test_number,
+                    "question": question,
+                    "modal_answer": modal_answer,
+                    "question_number": question_number
+                })
+
+                return redirect(url_for("set_test", test_slug=test_slug, question_number=question_number))
+
+            answer = request.form.get("answer")
+
+            db.questionnaire_details.update_one({
+                "test_number": test_number,
+                "question_number": question["question_number"]
+            }, {
+                "$set" : {
+                    "modal_answer": answer
+                }
+            })
+
+        return render_template("edit-questions.html",
+                               test = test,
+                               question = question,
+                               test_slug = test_slug,
+                               total_questions = total_questions
+                            )
+
+    return render_template("signin.html", message = "You are not Logged in")
+
+@app.route('/edit-question/<string:test_slug>/<int:question_number>')
+def edit_question(test_slug, question_number):
+    if "faculty_email" in session:
+        test = db.test_details.find_one({"_id": ObjectId(test_slug)})
+
+        test_number = test["test_number"]
+        question = db.questionnaire_details.find_one({"test_number": test_number, "question_number": question_number})
+
+        return render_template("change-answer.html", 
+                               question = question,
+                               test = test
+                            )
+    
+    return render_template("signin.html", message = "You are not Logged in.")
+
+#need to implement one route for adding questions to already created test
+@app.route('/add-question/<string:test_slug>/<int:question_number>')
+def add_question(test_slug, question_number):
+    if "faculty_email" in session:
+        test = db.test_details.find_one({"_id": ObjectId(test_slug)})
+        
+        test_number = test["test_number"]
+        question = db.questionnaire_details.find_one({"test_number": test_number, "question_number": question_number})
+
+        total_questions = db.questionnaire_details.count_documents({"test_number": test_number})
+
+        return render_template("add-question.html",
+                                question = question,
+                                test = test,
+                                total_questions = total_questions
+                            )
+    
+    return render_template("signin.html", message = "You are not Logged in")
+
+# Need another route to create a new test from scratch
+@app.route("/add-test", methods = ["GET", "POST"])
+def add_test():
+    if "faculty_email" in session:
+        if request.method == "POST":
+            total_tests = db.test_details.count_documents({})
+            test_name = request.form.get("test_name")
+
+            db.test_details.insert_one({"test_name": test_name, "test_number": total_tests+1 })
+
+            test = db.test_details.find_one({"test_number": total_tests+1})
+
+            return redirect(url_for(
+                "add_new_question", 
+                test_slug = test["_id"],
+                question_number = 1
+                ))
+        
+
+        return render_template("get-name.html")
+    
+    return render_template("signin.html", message = "You are not Logged In")
+
+@app.route("/add-new-question/<string:test_slug>/<int:question_number>", methods = ["POST", "GET"])
+def add_new_question(test_slug, question_number):
+    if "faculty_email" in session:
+        message = ""
+        if "question_message" in session:
+            message = session["question_message"]
+            session.pop("question_message", None)
+        
+        test = db.test_details.find_one({"_id": ObjectId(test_slug)})
+        test_name = test["test_name"]
+        test_number = test["test_number"]
+
+        total_questions = db.questionnaire_details.count_documents({"test_number": test_number})
+
+        if request.method == "POST":                
+            question = request.form.get("question")
+            modal_answer = request.form.get("modal_answer")
+
+            if db.questionnaire_details.find_one({"test_number": test_number, "question_number": question_number}):
+                # Update the modal answer and question
+                db.questionnaire_details.update_one(
+                    {'test_number': test_number,
+                        'question_number': question_number
+                    }, {
+                    "$set": {
+                        "question": question,
+                        "modal_answer": modal_answer
+                        }
+                    }
+                )
+            else:
+                # Insert the current document
+                db.questionnaire_details.insert_one({
+                    "test_number": test_number,
+                    "question_number": question_number,
+                    "question": question,
+                    "modal_answer": modal_answer
+                })
+
+            if request.form.get("submit-btn") == "next-question":
+                question_message = "Question Saved Successfully!"
+                session["question_message"] = question_message
+                return redirect(url_for(
+                    "add_new_question",
+                    test_slug = test_slug,
+                    question_number = question_number+1
+                ))
+            else:
+                test_message = "Test Saved Successfully!"
+                session["test_message"] = test_message
+                return redirect(url_for(
+                    "admin_home"
+                ))
+        
+        return render_template(
+            "new-test.html",
+            test = test,
+            test_name = test_name,
+            question_number = question_number,
+            total_questions = total_questions,
+            message = message
+        )
+
+    return render_template("signin.html", message = "You are not Logged In")
+
 app.run(debug=True)
