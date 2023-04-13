@@ -657,6 +657,15 @@ def admin_home():
 @app.route("/set-test/<string:test_slug>/<int:question_number>", methods = ["GET", "POST"])
 def set_test(test_slug, question_number):
     if "faculty_email" in session:
+        message = ""
+        if "addition_question" in session:
+            message = session["addition_question"]
+            session.pop("addition_question", None)
+        
+        if "empty_answer" in session:
+            message = session["empty_answer"]
+            session.pop("empty_answer", None)
+
         test = db.test_details.find_one({"_id": ObjectId(test_slug)})
         test_number = test["test_number"]
 
@@ -668,6 +677,11 @@ def set_test(test_slug, question_number):
                 question = request.form.get("question")
                 modal_answer = request.form.get("answer")
 
+                if question == "" or modal_answer == "":
+                    session["addition_question"] = "Cannot add empty fields"
+
+                    return redirect(url_for("set_test", test_slug=test_slug, question_number = total_questions))
+
                 db.questionnaire_details.insert_one({
                     "test_number": test_number,
                     "question": question,
@@ -678,6 +692,10 @@ def set_test(test_slug, question_number):
                 return redirect(url_for("set_test", test_slug=test_slug, question_number=question_number))
 
             answer = request.form.get("answer")
+
+            if answer == "":
+                session["empty_answer"] = "Cannot have Empty Modal Answer"
+                return redirect(url_for("set_test", test_slug=test_slug, question_number=question_number))
 
             db.questionnaire_details.update_one({
                 "test_number": test_number,
@@ -692,14 +710,15 @@ def set_test(test_slug, question_number):
                                test = test,
                                question = question,
                                test_slug = test_slug,
-                               total_questions = total_questions
+                               total_questions = total_questions,
+                                message = message
                             )
 
     return render_template("signin.html", message = "You are not Logged in")
 
 @app.route('/edit-question/<string:test_slug>/<int:question_number>')
 def edit_question(test_slug, question_number):
-    if "faculty_email" in session:
+    if "faculty_email" in session:        
         test = db.test_details.find_one({"_id": ObjectId(test_slug)})
 
         test_number = test["test_number"]
@@ -739,7 +758,7 @@ def add_test():
             total_tests = db.test_details.count_documents({})
             test_name = request.form.get("test_name")
 
-            db.test_details.insert_one({"test_name": test_name, "test_number": total_tests+1 })
+            db.test_details.insert_one({"test_name": test_name, "test_number": total_tests+1, "create_on": datetime.now() })
 
             test = db.test_details.find_one({"test_number": total_tests+1})
 
@@ -748,7 +767,6 @@ def add_test():
                 test_slug = test["_id"],
                 question_number = 1
                 ))
-        
 
         return render_template("get-name.html")
     
@@ -771,6 +789,19 @@ def add_new_question(test_slug, question_number):
         if request.method == "POST":                
             question = request.form.get("question")
             modal_answer = request.form.get("modal_answer")
+
+            if question=="" or modal_answer == "":
+                if question == "":
+                    question_message = "Cannot Add Empty Question"
+                else:
+                    question_message = "Cannot Add Empty Modal Answer"
+                session["question_message"] = question_message
+                
+                return redirect(url_for(
+                    "add_new_question",
+                    test_slug = test_slug,
+                    question_number = question_number
+                ))
 
             if db.questionnaire_details.find_one({"test_number": test_number, "question_number": question_number}):
                 # Update the modal answer and question
@@ -818,5 +849,15 @@ def add_new_question(test_slug, question_number):
         )
 
     return render_template("signin.html", message = "You are not Logged In")
+
+@app.route("/check-validity")
+def check_validity():
+    total_tests = db.test_details.count_documents({})
+    
+    test_message = "Test Not Added"
+    session["test_message"] = test_message
+    db.test_details.delete_one({"test_number": total_tests})
+
+    return redirect(url_for("admin_home"))
 
 app.run(debug=True)
