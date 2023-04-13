@@ -199,7 +199,8 @@
                   <strong>Test Id: </strong> {{ test.test_number }}</br>
 
                   {% set count = namespace(value=0) %}
-                  {% for x in questions %}
+                  {% set ques = questions.clone() %}
+                  {% for x in ques %}
                     {% if x.test_number==test.test_number %}
                       {% set count.value = count.value + 1 %}
                     {% endif %}
