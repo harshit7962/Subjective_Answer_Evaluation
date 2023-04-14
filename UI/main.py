@@ -540,7 +540,12 @@ def computation():
                 user_answer = db.answer_collection.find_one({"test_number": test_number,
                                                              "question_number": i+1,
                                                              "email": session["email"]
-                                                            })["answer"]
+                                                            })
+
+                if user_answer:
+                    user_answer = user_answer["answer"]
+                else:
+                    user_answer = ""
                 
                 # modal answer
                 modal_answer = db.questionnaire_details.find_one({"test_number": test_number, "question_number": i+1})["modal_answer"]
@@ -597,7 +602,7 @@ def computation():
                     }
                 })
 
-                print("\n\n\n\nTest Evaluation Completed\n\n\n\n")
+            print("\n\n\n\nTest Evaluation Completed\n\n\n\n")
         
     return render_template("signin.html", message="You are logged in")
 
