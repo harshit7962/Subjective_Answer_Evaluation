@@ -283,6 +283,7 @@ class keyword():
         yake_keyword_user = self.keywordExtractor(text2)
 
         return self.scoring_unit(yake_keyword_model, yake_keyword_user)
+    
 
 @app.after_request
 def after_request(response):
@@ -418,6 +419,9 @@ def exams():
 def logout():
     if "email" in session:
         session.pop("email", None)
+
+    if "faculty_email" in session:
+        session.pop("faculty_email", None)
     
     return redirect(url_for("index"))
 
@@ -432,7 +436,10 @@ def test_route(test_slug, question_number=1):
         session["test_number"] = test_number
 
         # Check if current question is already attempted by the candidate
-        current_size = db.answer_collection.count_documents({"email": session["email"], "test_number": test_number, "question_number": question_number})
+        current_size = db.answer_collection.count_documents({"email": session["email"], 
+                                                             "test_number": test_number, 
+                                                             "question_number": question_number
+                                                            })
         if(current_size >0):
             already_present = True
 
@@ -519,6 +526,7 @@ def show_result(test_slug, question_number=1):
     return render_template("signin.html", message="You are not Logged In")
 
 
+
 # Computation of result
 @app.route("/computation")
 def computation():
@@ -540,12 +548,7 @@ def computation():
                 user_answer = db.answer_collection.find_one({"test_number": test_number,
                                                              "question_number": i+1,
                                                              "email": session["email"]
-                                                            })
-
-                if user_answer:
-                    user_answer = user_answer["answer"]
-                else:
-                    user_answer = ""
+                                                            })["answer"]
                 
                 # modal answer
                 modal_answer = db.questionnaire_details.find_one({"test_number": test_number, "question_number": i+1})["modal_answer"]
@@ -602,9 +605,10 @@ def computation():
                     }
                 })
 
-            print("\n\n\n\nTest Evaluation Completed\n\n\n\n")
+                print("\n\n\n\nTest Evaluation Completed\n\n\n\n")
         
     return render_template("signin.html", message="You are logged in")
+
 
 # ----------------------------------------------------------------
 # Admin Routes
@@ -864,5 +868,45 @@ def check_validity():
     db.test_details.delete_one({"test_number": total_tests})
 
     return redirect(url_for("admin_home"))
+
+@app.route("/performance")
+def performance():
+    if "faculty_email" in session:
+        faculty = db.faculty_details.find_one({"email": session["faculty_email"]})
+        students = db.student_details.find()
+
+        return render_template("performance.html", students = students, faculty = faculty)
+
+    return render_template("signin.html", message = "You are not Logged In")
+
+@app.route("/student/<string:student_slug>")
+def student_viewing(student_slug):
+    if "faculty_email" in session:
+        student = db.student_details.find_one({"_id": ObjectId(student_slug)})
+        tests = db.test_details.find()
+
+        attempted_tests = []
+
+        for test in tests:
+            test_number = test["test_number"]
+
+            attempted = db.answer_collection.find_one({
+                "email": student["email"],
+                "test_number": test_number
+            })
+
+            if attempted:
+                test = db.test_details.find_one({"test_number": test_number})
+                attempted_tests.append(test)
+        
+        session["email"] = student["email"]
+        return render_template(
+            "results.html",
+            tests = attempted_tests,
+            user = student
+        )
+
+    return render_template("signin.html", message = "You are not Logged In")
+
 
 app.run(debug=True)
