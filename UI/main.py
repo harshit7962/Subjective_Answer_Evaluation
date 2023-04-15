@@ -540,7 +540,7 @@ def computation():
             total_questions = db.questionnaire_details.count_documents({"test_number": test_number})
 
             # Load our saved model
-            model = load_model('model.h5')
+            model = load_model('model_ann.h5')
 
             # For each question we get user answer and modal answer and print them
             for i in range(total_questions):
