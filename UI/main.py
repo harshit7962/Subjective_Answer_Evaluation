@@ -624,9 +624,6 @@ def admin_login():
         email = request.form.get("email")
         password = request.form.get("password")
 
-        print("\n\n\n\n\n\n")
-        print(email, password) 
-
         faculty = db.faculty_details.find_one({"email": email})
         
 
