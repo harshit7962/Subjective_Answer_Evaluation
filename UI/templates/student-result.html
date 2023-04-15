@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Favicon -->
+    <link href="{{url_for('static', filename='assets/img/favicon1.png ')}}" rel="icon">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Performance | AssessMeNow.AI</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,700,700i&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{{url_for('static', filename='assets/vendor/animate.css/animate.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='assets/vendor/aos/aos.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='assets/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='assets/vendor/bootstrap-icons/bootstrap-icons.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='assets/vendor/boxicons/css/boxicons.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='assets/vendor/glightbox/css/glightbox.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='assets/vendor/swiper/swiper-bundle.min.css')}}" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://kit.fontawesome.com/950cae1917.js" crossorigin="anonymous"></script>
+
+    <link href="{{url_for('static', filename='assets/css/style.css')}}" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <style>
+        .bcontent {
+            margin-top: 10px; 
+        }
+        .dropdown.open > a {
+		    background: none !important;
+	    }
+	    .dropdown-menu {
+		    border-radius: 1px;
+		    border-color: #e5e5e5;
+		    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+	    }
+	    .dropdown-menu li a {
+		    color: #777;
+		    padding: 8px 20px;
+		    line-height: normal;
+	    }
+	    .dropdown-menu li a:hover, .dropdown-menu li a:active {
+		    color: #333;
+	    }	
+	    .dropdown-menu .material-icons {
+		    font-size: 21px;
+		    line-height: 16px;
+		    vertical-align: middle;
+		    margin-top: -2px;
+	    }
+      .button {
+      background-color: #4CAF50; /* Green */
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      -webkit-transition-duration: 0.4s; /* Safari */
+      transition-duration: 0.4s;
+      border-radius: 10px;
+      font-size: 20px;
+      margin-top: 30px;
+      margin-right: 0px;
+      }
+
+      .button2:hover {
+      box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+      }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="container-fluid">
+        <header id="header" class="fixed-top d-flex align-items-center">
+            <div class="container d-flex justify-content-between align-items-center">
+
+                <div class="logo">
+                    <h1 class="text-light">
+                        <a href="/">
+                            <span style="color: mistyrose;">AssessMeNow.AI</span>
+                        </a>
+                    </h1>
+                </div>
+
+                <nav id="navbar" class="navbar">
+                    <ul>
+                        <li>
+                            <a href="/admin_home">Dashboard</a>
+                        </li>
+                        <li>
+                            <a href="/performance" class="active">Student Performance</a>
+                        </li>
+                        <li>
+                            <a href="/contact">Contact Us</a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle user-action" data-toggle="dropdown" style="text-decoration: none;">
+                                <img src="{{ url_for('static', filename='image/navImg.jpg') }}" alt="Avatar" class="avatar" style="padding-right: 5px;">
+                                {{ faculty['name'] }}
+                                <b class="caret"></b>
+                            </a>
+
+                            <ul class="dropdown-menu">
+                                <li>
+                                  <a href="#" style="text-decoration: none;">
+                                    <i class="fa fa-id-card-o" style="color: black;"></i>
+                                    {{ faculty['email'] }}
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="#" style="text-decoration-color: none;">
+                                    <i class="fa fa-shield" style="color: black;"></i>
+                                    {{ faculty['author'] }}
+                                  </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                  <a href="/logout">
+                                    <i class="fa fa-sign-out" style="color: black;"></i>
+                                    Logout
+                                  </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <i class="bi bi-list mobile-nav-toggle"></i>
+                </nav>
+            </div>
+        </header>
+    </div>
+
+    <main id="main">
+        <section class="breadcrumbs">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2>
+                        <strong>{{ user.name }}'s Results </strong>
+                    </h2>
+
+                    <ol>
+                        <li>Home</li>
+                        <li>{{ user.name }}</li>
+                        <li><a href="/student/{{user._id}}">Marks</a></li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <div class="container bcontent">
+            {% for test in tests %}
+                <div class="card">
+                    <div class="row no-gutters">
+                        <div class="col-sm-5">
+                            <img src="{{ url_for('static', filename='image/abc.jpg')}}" width="75%">
+                        </div>
+
+                        <div class="col-sm-7">
+                            <div class="card-body">
+                                <h4 style="display: inline-block;">Exam Name :&nbsp; </h4><h5 style="display: inline-block; color: blue;" class="card-title">{{ test.test_name.upper() }}</h5>
+
+                                <p class="card-text">
+                                    <strong>Test Id:</strong> {{ test.test_number }}<br>
+                                    <strong>Created on:</strong> {{ test.create_on }} <br>
+                                    <button class="button button2"><a href="/student_result/{{user._id}}/{{test._id}}/1" style="text-decoration: none; color: white;">Show Results</a></button> 
+                                    <br>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div><br><br>
+    </main>
+
+    <footer id="footer" data-aos="fade-up" data-aos-easing="ease-in-out" data-aos-duration="500">
+
+        <div class="footer-newsletter">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-6">
+                <h4>Our Newsletter</h4>
+                <p>Subscribe for the latest news and updates.</p>
+              </div>
+              <div class="col-lg-6">
+                <form action="" method="post">
+                  <input type="email" name="email"><input type="submit" value="Subscribe">
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        <div class="footer-top">
+          <div class="container">
+            <div class="row">
+      
+              <div class="col-lg-3 col-md-6 footer-links">
+                <h4>Useful Links</h4>
+                <ul>
+                  <li><i class="bx bx-chevron-right"></i> <a href="#">Home</a></li>
+                  <li><i class="bx bx-chevron-right"></i> <a href="#">About us</a></li>
+                </ul>
+              </div>
+      
+              <div class="col-lg-3 col-md-6 footer-links">
+                <h4>Our Services</h4>
+                <ul>
+                  <li><i class="bx bx-chevron-right"></i> <a href="#">Create Exams</a></li>
+                  <li><i class="bx bx-chevron-right"></i> <a href="#">Schedule Appointment</a></li>
+                  <li><i class="bx bx-chevron-right"></i> <a href="#">Careers</a></li>
+                  <li><i class="bx bx-chevron-right"></i> <a href="#">University Relations</a></li>
+                </ul>
+              </div>
+      
+              <div class="col-lg-3 col-md-6 footer-contact">
+                <h4>Contact Us</h4>
+                <p>
+                  VIT, Vellore - 632014<br>
+                  Tamil Nadu <br><br>
+                  <strong>Phone:</strong> +91 9559165096<br>
+                  <strong>Email:</strong> raghav.agrawal2019@vitstudent.ac.in<br>
+                </p>
+      
+              </div>
+      
+              <div class="col-lg-3 col-md-6 footer-info">
+                <h3>About AssessMeNow.AI</h3>
+                <p>AssessMeNow.AI provides a platform for Students, Teachers / Faculties to create assessments from anywhere in the world, and attempt the exam remotely. Assessments are graded using AI, hence fair.</p>
+              </div>
+      
+            </div>
+          </div>
+        </div>
+      
+        <div class="container">
+          <div class="copyright">
+            &copy; Copyright <strong><span>AssessMeNow.AI</span></strong>. All Rights Reserved
+          </div>
+          <div class="credits">
+            Designed by <a href="https://kind-hodgkin-4aa602.netlify.app/">Raghav | Harshit | Shrishail</a>
+          </div>
+        </div>
+      </footer><!-- End Footer -->
+      
+      <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    
+    <!-- Vendor JS Files -->
+    <script src="{{ url_for('static', filename='assets/vendor/aos/aos.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/glightbox/js/glightbox.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/php-email-form/validate.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/purecounter/purecounter.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/swiper/swiper-bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/waypoints/noframework.waypoints.js') }}"></script>
+    
+    <!-- Template Main JS File -->
+    <script src="{{ url_for('static', filename='assets/js/main.js') }}"></script>
+      
+</body>
+</html>

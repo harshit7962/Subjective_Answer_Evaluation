@@ -3,7 +3,7 @@
 
 <head>
     <link href="{{url_for('static', filename='assets/img/favicon1.png ')}}" rel="icon">
-    <title>Exams</title>
+    <title>Results | AssessMeNow.AI</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
@@ -145,7 +145,7 @@
                         <p class="card-text">
                   
                                 <strong>Test Id:</strong> {{ test.test_number }}<br>
-                                <strong>Created on:</strong> test.test_created <br>
+                                <strong>Created on:</strong> {{ test.create_on }} <br>
                                   <button class="button button2"><a href="/result/{{ test._id }}/1" style="text-decoration: none; color: white;">Show Results</a></button> 
                                   <br>
                         </p>

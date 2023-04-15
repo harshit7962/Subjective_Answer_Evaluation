@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results | AssessMeNow.AI</title>
+
+    <meta content="" name="description">
+        <meta content="" name="keywords">
+
+        <!-- Favicons -->
+        <link href="{{ url_for('static', filename='assets/img/favicon1.png' )}}" rel="icon">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style1.css' )}}">
+
+        <style>
+            @media (max-width: 415px) {
+                .copyright {
+                margin-top: 30px;
+            }
+            }
+
+            .copyright {
+                margin-top: 20px;
+            }
+
+            .wrapper {
+                width: 100%;
+                padding-right: 15px;
+                padding-left: 15px;
+                margin-right: auto;
+                margin-left: auto;
+            }
+
+            @media (min-width: 576px) {
+                .wrapper {
+                max-width: 540px;
+            }
+            }
+
+            @media (min-width: 768px) {
+                .wrapper {
+                max-width: 720px;
+            }
+            }
+
+            @media (min-width: 992px) {
+                .wrapper {
+                max-width: 960px;
+            }
+            }
+
+            @media (min-width: 1200px) {
+                .wrapper {
+                max-width: 1140px;
+            }
+            }
+
+            p.copy-footer-29 a {
+                color: #495057;
+            }
+
+            p.copy-footer-29 a:hover {
+                color: #4361ee;
+            }
+        </style>
+</head>
+<body>
+
+    <form class="survey-form" method="post" action="">
+        <center><h1><i class="far fa-list-alt"></i>Exam - <span style="color: blue">{{ test_name.upper() }}</span> - Results</h1></center>
+
+        <div class="steps">
+        {% for n in range(total_questions) %}
+            {% if (n+1)==(modal["question_number"]) %}
+                <div class="step current"></div>
+            {% else %}
+                <div class="step"></div>
+            {% endif %}
+        {% endfor %}
+        </div>
+
+        <div class="step-content current" data-step="1">
+            <div class="fields">
+                <h3>Q<span>{{ modal["question_number"] }}.</span> {{ modal["question"] }} </h3>
+                
+
+                <p>Modal Answer:-</p>
+                <div class="group">
+                    <p style="color: green; text-align: justify; text-justify: inter-word;"> {{ modal["modal_answer"] }} </p>
+                </div>	
+                
+                <p>Student Answer:-</p>
+                <div class="group">
+                    {% if user["answer"] %}
+                        <p style="color: darkblue;text-align: justify; text-justify: inter-word;">{{ user["answer"] }} </p>
+                    {% else %}
+                        <p style="color: red;"> Question Not Attempted </p>
+                    {% endif %}
+                </div>	
+
+                <h4>Module Wise Score: </h4>
+                <div class="group">                
+                {% if user["keyword_score"] %}
+                    <p style="display: inline-block;"><strong>Keyword Score: </strong> {{ user["keyword_score"] }} </p>
+                {% else %}
+                    <p style="display: inline-block;"><strong>Keyword Score: </strong> 0 </p>
+                {% endif %}
+
+                {% if user["ner_score"] %}
+                    <p style="display: inline-block;"><strong>NER Score: </strong> {{ user["ner_score"] }} </p>
+                {% else %}
+                    <p style="display: inline-block;"><strong>NER Score: </strong> 0 </p>
+                {% endif %}
+
+                {% if user["similarity_score"] %}
+                    <p style="display: inline-block;"><strong>Smilarity Score: </strong>{{ user["similarity_score"] }} </p>
+                {% else %}
+                    <p style="display: inline-block;"><strong>Similarity Score: </strong> 0 </p>
+                {% endif %}
+                </div>	
+
+                
+                <div class="group">
+                    {% if user["final_score"] %}
+                    <h3>Final Score of {{ modal["question_number"] }}:- <b> {{ user.final_score }} </b></h3>
+                    {% else %}
+                    <h3>Final Score: <b> 0 </b></h3>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <center>
+            {% if modal["question_number"] != 1 %}
+            <div class="buttons" style="display: inline-block;">
+                <a href="/student_result/{{student._id}}/{{test_slug}}/{{modal.question_number-1}}" class="btn" data-set-step="2">Previous Question</a>
+            </div>
+            {% endif %}
+
+            {% if modal.question_number != total_questions %}
+            <div class="buttons" style="display: inline-block;">
+                <a href="/student_result/{{student._id}}/{{test_slug}}/{{modal.question_number+1}}" class="btn" data-set-step="2">Next Question</a>
+            </div>
+            {% endif %}
+
+            <br>
+            {% if modal.question_number == total_questions %}
+            <div class="buttons" style="display: inline-block;">
+                <a href="/student/{{student._id}}" class="btn" data-set-step="2" style="background-color: tomato;"> Exit </a>
+            </div>
+            {% endif %}
+            </center>
+        </form>
+            
+        </div>
+
+        <div class="copyright text-center">
+            <div class="wrapper">
+                <center> <p class="copy-footer-29">© Copyright <b style="color:blue;">AssessMeNow.AI</b> . All rights reserved </p></center>
+            </div>
+        </div>
+        <br><br>
+    
+</body>
+</html>

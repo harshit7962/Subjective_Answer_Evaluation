@@ -884,6 +884,7 @@ def student_viewing(student_slug):
     if "faculty_email" in session:
         student = db.student_details.find_one({"_id": ObjectId(student_slug)})
         tests = db.test_details.find()
+        faculty = db.faculty_details.find_one({"email": session["faculty_email"]})
 
         attempted_tests = []
 
@@ -899,14 +900,45 @@ def student_viewing(student_slug):
                 test = db.test_details.find_one({"test_number": test_number})
                 attempted_tests.append(test)
         
-        session["email"] = student["email"]
         return render_template(
-            "results.html",
+            "student-result.html",
             tests = attempted_tests,
-            user = student
+            user = student,
+            faculty = faculty
         )
 
     return render_template("signin.html", message = "You are not Logged In")
 
+@app.route("/student_result/<string:student_slug>/<string:test_slug>/<int:question_number>")
+def student_result(student_slug, test_slug, question_number):
+    if "faculty_email" in session:
+        test = db.test_details.find_one({"_id": ObjectId(test_slug)})
+        test_number = test["test_number"]
+        test_name = test["test_name"]
+        student = db.student_details.find_one({"_id": ObjectId(student_slug)})
 
+        modal_answer_base = db.questionnaire_details.find_one({
+            "test_number": test_number,
+            "question_number": question_number
+        })
+
+        user_answer_base = db.answer_collection.find_one({
+            "test_number": test_number,
+            "question_number": question_number,
+            "email": student["email"]
+        })
+
+        total_questions = db.questionnaire_details.count_documents({"test_number": test_number})
+
+        return render_template(
+            "student_exam_result.html",
+            modal = modal_answer_base,
+            user = user_answer_base,
+            total_questions = total_questions,
+            test_slug = test_slug,
+            test_name = test_name,
+            student = student
+        )
+
+    return render_template("signin.html", message = "You are not Logged In")
 app.run(debug=True)
