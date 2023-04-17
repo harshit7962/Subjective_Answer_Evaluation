@@ -97,14 +97,17 @@
                 </div>
                 {% endif %}
 
-                <div class="buttons" style="display: inline-block;">
-                    <button type="submit" class="btn">Submit Answer</button>
-                </div>
-
                 {% if question[0].question_number != total_questions %}
-                <div class="buttons" style="display: inline-block;">
-                    <a href="/test/{{test_slug}}/{{question[0].question_number+1}}" class="btn" data-set-step="2">Next Question</a>
-                </div>
+                    <div class="buttons" style="display: inline-block;">
+                        <button type="submit" class="btn" name="submit" value="non_final">Submit Answer</button>
+                    </div>
+                    <div class="buttons" style="display: inline-block;">
+                        <a href="/test/{{test_slug}}/{{question[0].question_number+1}}" class="btn" data-set-step="2">Next Question</a>
+                    </div>
+                {% else %}
+                    <div class="buttons" style="display: inline-block;">
+                        <button type="submit" class="btn" name="submit" value="final">Submit Answer</button>
+                    </div>
                 {% endif %}
 
                 <br>

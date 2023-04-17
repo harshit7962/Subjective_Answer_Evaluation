@@ -451,8 +451,14 @@ def test_route(test_slug, question_number=1):
             else:
                 db.answer_collection.insert_one({"email": session["email"], "test_number": test_number, "question_number": question_number, "answer": answer})
         
-        questions = list(db.questionnaire_details.find({"test_number": test_number, "question_number": question_number}))
         total_questions = db.questionnaire_details.count_documents({"test_number": test_number})
+
+        print(request.form.get('submit'))
+              
+        if request.form.get("submit") == "non_final":
+            questions = list(db.questionnaire_details.find({"test_number": test_number, "question_number" : question_number+1}))
+        else:
+            questions = list(db.questionnaire_details.find({"test_number": test_number, "question_number" : question_number}))
 
         
         return render_template("questions.html",
