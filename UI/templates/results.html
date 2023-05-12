@@ -137,7 +137,9 @@
         <div class="card">
             <div class="row no-gutters">
                 <div class="col-sm-5">
-                   <img src="{{url_for('static', filename='image/abc.jpg')}}" width="75%">
+                  <center>
+                   <img src="{{url_for('static', filename='image/resultImg.jpg')}}" width="70%" style="margin-top: 20px;margin-bottom: 20px;border-radius: 15%;">
+                  </center>
                 </div>
                 <div class="col-sm-7">
                     <div class="card-body">
@@ -145,9 +147,12 @@
                         <p class="card-text">
                   
                                 <strong>Test Id:</strong> {{ test.test_number }}<br>
+                                <strong>Total Questions:</strong> {{ tq[loop.index0] }}<br>
+                                <strong>Attempted Questions:</strong> {{ aq[loop.index0] }}<br>
+                                <strong>Maximum Marks:</strong> {{ tq[loop.index0] * 10}}<br>
                                 <strong>Created on:</strong> {{ test.create_on }} <br>
                                   <button class="button button2"><a href="/result/{{ test._id }}/1" style="text-decoration: none; color: white;">Show Results</a></button> 
-                                  <br>
+                                  <br><br>
                         </p>
                     </div>
                     
