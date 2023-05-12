@@ -402,6 +402,21 @@ def exams():
 
         tests = db.test_details.find()
         questions = db.questionnaire_details.find()
+       
+        temp1 = tests.clone()
+        #-----changes-------#
+        attempted_tests = []
+        for test in temp1:
+            test_number = test["test_number"]
+            attempted = db.answer_collection.find_one({"email": session["email"], "test_number": test_number})
+            
+            if attempted:
+                attempted_tests.append(1)
+            else:
+                attempted_tests.append(0)
+
+        print(attempted_tests)
+        #-------------------#  
 
         if "message" in session:
             message = session["message"]
@@ -411,6 +426,7 @@ def exams():
                                 user = user,
                                 tests = tests,
                                 questions = questions,
+                                at = attempted_tests,
                                 message = message
                             )
     return render_template("signin.html", message="You are not Logged In")
