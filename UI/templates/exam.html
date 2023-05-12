@@ -142,8 +142,10 @@
       {% for test in tests %}
         <div class="card">
             <div class="row no-gutters">
-                <div class="col-sm-5">
-                   <img src="static/image/abc.jpg" width="75%">
+                <div class="col-sm-5" >
+                  <center>
+                   <img src="static/image/abc.jpg" width="75%" class="center">
+                  </center>
                 </div>
                 <div class="col-sm-7">
                     <div class="card-body">
@@ -152,7 +154,7 @@
                   
                                 <strong>Test Id:</strong> {{ test.test_number }}<br>
                                 {% set count = namespace(value=0) %}
-				{% set ques = questions.clone() %}
+				                        {% set ques = questions.clone() %}
                                 {% for x in ques %}
                                   {% if x.test_number==test.test_number %}
                                     {% set count.value = count.value + 1 %}
@@ -164,8 +166,11 @@
                                 
                                 <strong>Created on:</strong> {{test.create_on}} <br>
 
-                                {% if count.value>0 %}
+                                {% if count.value>0 and at[loop.index0]==0 %}
                                   <button class="button button2"><a href="/test/{{ test._id }}/1" style="text-decoration: none; color: white;">Attempt Exam</a></button> 
+                                  <br>
+                                {% elif at[loop.index0]==1 %}
+                                  <button class="button button2" style="opacity: 0.6;cursor: not-allowed; background-color: red; color: white;">Exam Already Attempted !!!</button> 
                                   <br>
                                 {% else %}  
                                   <button class="button button2" style="opacity: 0.6;cursor: not-allowed;">Attempt Exam</button> 
