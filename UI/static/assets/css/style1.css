@@ -3,7 +3,7 @@ html, body, div, input, span, a, select, textarea, option, h1, h2, h3, h4, main,
     font-family: Tahoma, Geneva, sans-serif;
 }
 html {
-    background: #f8f9f9 linear-gradient(0deg, #f8f9f9 0%, #f8f9f9 80%, #51b47c 80%, #51b47c 100%) no-repeat;
+    background: #f8f9f9 linear-gradient(0deg, #f8f9f9 0%, #DFD5CA 80%, #62bc89 80%, #62bc89 100%) no-repeat;
     padding: 30px;
     height: 100%;
 }
