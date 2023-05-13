@@ -69,7 +69,7 @@
 		<form class="survey-form" method="post" action="/test/{{test_slug}}/{{question[0].question_number}}">		
 		<!-- place code here -->
             <center><h1><i class="far fa-list-alt"></i>Exam - <span style="color: blue">{{ test_name.upper() }}</span> - Questions</h1></center>
-            <center>Time Left - <strong><span style="color: white; background-color: red;"> timer </span></strong></center><br>
+            <!-- <center>Time Left - <strong><span style="color: white; background-color: red;"> timer </span></strong></center><br> -->
             <div class="steps">
             {% for n in range(total_questions) %}
                 {% if (n+1)==(question[0]["question_number"]) %}
