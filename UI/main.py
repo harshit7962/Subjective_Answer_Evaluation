@@ -504,6 +504,8 @@ def results():
     if "email" in session:
         tests = db.test_details.find()
         attempted_tests = []
+        attempted_questions = []
+        total_questions = []
 
         for test in tests:
             test_number = test["test_number"]
@@ -511,6 +513,11 @@ def results():
             attempted = db.answer_collection.find_one({"email": session["email"], "test_number": test_number})
             
             if attempted:
+                print(attempted)
+                x = db.answer_collection.count_documents({"email": session["email"], "test_number": test_number})
+                y = db.questionnaire_details.count_documents({"test_number": test_number})
+                attempted_questions.append(x)
+                total_questions.append(y)
                 test = db.test_details.find_one({"test_number": test_number})
                 attempted_tests.append(test)
         
@@ -518,6 +525,8 @@ def results():
 
         return render_template("results.html", 
                                tests = attempted_tests, 
+                               tq = total_questions,
+                               aq = attempted_questions,
                                user = user
                             )
     return render_template("signin.html", message="You are not Logged In")
