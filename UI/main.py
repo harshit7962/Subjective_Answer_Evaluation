@@ -96,7 +96,7 @@ class similarity():
 
         for i in range(n):
             for j in range(m):
-                if(self.cosine_similarity(mod_emb[i], usr_emb[j]) >= 0.7):
+                if(self.cosine_similarity(mod_emb[i], usr_emb[j]) >= 0.75):
                     sim_ans += 1
                     break
         
@@ -415,7 +415,6 @@ def exams():
             else:
                 attempted_tests.append(0)
 
-        print(attempted_tests)
         #-------------------#  
 
         if "message" in session:
@@ -513,7 +512,6 @@ def results():
             attempted = db.answer_collection.find_one({"email": session["email"], "test_number": test_number})
             
             if attempted:
-                print(attempted)
                 x = db.answer_collection.count_documents({"email": session["email"], "test_number": test_number})
                 y = db.questionnaire_details.count_documents({"test_number": test_number})
                 attempted_questions.append(x)
