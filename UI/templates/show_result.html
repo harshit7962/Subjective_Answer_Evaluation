@@ -32,18 +32,17 @@
       <p><strong>Keyword Score: </strong>0</p>
     {% endif %}
 
-    {% if user["ner score"] %}
-      <p><strong>NER Score: </strong>{{ user["ner_score"] }} </p>
-    {% else %}
-      <p><strong>NER Score: </strong>0</p>
-    {% endif %}
-
     {% if user["similarity_score"] %}
       <p><strong>Smilarity Score: </strong>{{ user["similarity_score"] }} </p>
     {% else %}
       <p><strong>Similarity Score: </strong>0</p>
     {% endif %}
 
+    {% if user["ner score"] %}
+      <p><strong>NER Score: </strong>{{ user["ner_score"] }} </p>
+    {% else %}
+      <p><strong>NER Score: </strong>0</p>
+    {% endif %}
 
     <!-- Final Scoring -->
     {% if user["final_score"] %}
