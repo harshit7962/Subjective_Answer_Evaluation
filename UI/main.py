@@ -157,12 +157,26 @@ class ner():
             if(modal_entity[i] in user_entity):
                 count += 1
         
-        count = count*10/(n)
+        count = (count/n)*10
         return count
+
+    def regex(sekf, text):
+        text2 = ''
+        for i in text:
+            if ((ord(i) >= 65 and ord(i) <= 90) or (ord(i) >= 97 and ord(i) <= 122) or ord(i)==32):
+                text2+=i
+        
+        text2 = " ".join(text2.strip().split())
+        text2 = text2.lower()
+
+        return text2
     
     def ner_score(self):
         text1 = self.text1
         text2 = self.text2
+
+        text1 = self.regex(text1)
+        text2 = self.regex(text2)
 
         modal_entity = self.spacy_name(text1)
         user_entity = self.spacy_name(text2)
@@ -567,7 +581,7 @@ def computation():
             total_questions = db.questionnaire_details.count_documents({"test_number": test_number})
 
             # Load our saved model
-            model = load_model('model_ann.h5')
+            model = load_model('model1.h5')
 
             # For each question we get user answer and modal answer and print them
             for i in range(total_questions):
@@ -617,6 +631,12 @@ def computation():
                 final_score = final_score.item()
                 
                 final_score = round(final_score, 1)
+
+                if int(similarity_score) == 10 and int(keyword_score) == 10 and int(ner_score) == 10:
+                    final_score = 10
+
+                if int(similarity_score) == 0 and int(keyword_score) == 0 and int(ner_score) == 0:
+                    final_score = 0
 
                 if final_score < 0:
                     final_score = 0.0
