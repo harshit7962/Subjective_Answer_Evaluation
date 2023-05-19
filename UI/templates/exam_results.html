@@ -107,16 +107,16 @@
                     <p style="display: inline-block;"><strong>Keyword Score: </strong> 0 </p>
                 {% endif %}
 
-                {% if user["ner_score"] %}
-                    <p style="display: inline-block;"><strong>NER Score: </strong> {{ user["ner_score"] }} </p>
-                {% else %}
-                    <p style="display: inline-block;"><strong>NER Score: </strong> 0 </p>
-                {% endif %}
-
                 {% if user["similarity_score"] %}
                     <p style="display: inline-block;"><strong>Smilarity Score: </strong>{{ user["similarity_score"] }} </p>
                 {% else %}
                     <p style="display: inline-block;"><strong>Similarity Score: </strong> 0 </p>
+                {% endif %}
+
+                {% if user["ner_score"] %}
+                    <p style="display: inline-block;"><strong>NER Score: </strong> {{ user["ner_score"] }} </p>
+                {% else %}
+                    <p style="display: inline-block;"><strong>NER Score: </strong> 0 </p>
                 {% endif %}
                 </div>	
 
